@@ -271,6 +271,11 @@ class VIEW3D_PT_bf_ob_remesh(Panel):
     bl_region_type = "UI"
     bl_options = {"DEFAULT_CLOSED"}
 
+    @classmethod
+    def poll(cls, context):
+        ob = context.object
+        return ob and ob.type == "MESH"
+
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
