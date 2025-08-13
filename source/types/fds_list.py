@@ -376,11 +376,11 @@ class FDSNamelist(FDSList):
         body.append(f"&{self.fds_label}")
         for p in n:
             fds_label, fds_values = p.fds_label, p._to_strings()
-            if (
-                not fds_values
-            ):  # fds_label only provided, probably preformatted (eg. BFParamOther)
+            if not fds_values:
+                # fds_label only provided, probably preformatted (eg. BFParamOther)
                 body = append_word(body, word=fds_label)
-            else:  # fds_label and its values provided
+            else:
+                # fds_label and its values provided
                 word = f"{fds_label}={','.join(fds_values)}"
                 if len(word) <= MAXLEN - INDENT or len(fds_values) == 1:
                     # short param, keep together

@@ -106,6 +106,7 @@ def write_bingeom_file(
     @param fds_surfs: boundary condition indexes in FDS flat format, eg. (b0, b1, ...)
     @param fds_volus: volumes connectivity in FDS flat format, eg. (i0, j0, k0, w0, i1, ...)
     @param filepath: destination filepath
+    @param force_dir: make directory
     """
 
     try:
