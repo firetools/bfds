@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 import bpy
 
 # Howto
@@ -8,176 +10,128 @@ import bpy
 # bpy.ops.wm.open_mainfile(filepath=f"{path}/MESH.blend")
 
 
-def _create_mesh_ob(name):
-    bpy.ops.mesh.primitive_cube_add(size=3.0, location=(5.0, 6.0, 7.0))
+def _create_ob():
+    bpy.ops.mesh.primitive_cube_add(size=1.0, location=(5.0, 6.0, 7.0))
     ob = bpy.context.object
-    ob.name = name
+    ob.name = "Test"
     ob.bf_namelist_cls = "ON_MESH"
-    ob.bf_fyi = "Test info"
+    ob.bf_fyi = "Fyi"
     ob.bf_mesh_ijk = 11, 12, 14
     return ob
 
 
-def test_simple_MESH():
-    ob = _create_mesh_ob("test_simple_MESH")
+def _remove_ob(ob):
+    bpy.data.objects.remove(ob, do_unlink=True)
+
+
+def test_simple():
+    ob = _create_ob()
+    res = ob.to_fds_list(bpy.context).to_string()
     fds_string = """
-Cell Qty: 1848 | Size: 0.273·0.250·0.214m | Aspect: 1.3 | Poisson: No
-&MESH ID='test_simple_MESH' FYI='Test info' IJK=11,12,14
-      XB=3.500,6.500,4.500,7.500,5.500,8.500 /
+Cell Qty: 1848 | Size: 0.091·0.083·0.071m | Aspect: 1.3 | Poisson: No
+&MESH ID='Test' FYI='Fyi' IJK=11,12,14 XB=4.500,5.500,5.500,6.500,6.500,7.500 /
 """
-    assert ob.to_fds_list(bpy.context).to_string() == fds_string[1:-1]
+    _remove_ob(ob)
+    assert res == fds_string[1:-1]
 
 
-def test_MESH_split_x():
-    ob = _create_mesh_ob("test_MESH_split_x")
+def test_split_x():
+    ob = _create_ob()
     ob.bf_mesh_nsplits = 2, 1, 1
     ob.bf_mesh_nsplits_export = True
-    fds_string = ob.to_fds_list(bpy.context).to_string()
-    expected_fds_string = """
-Cell Qty: 1008 | Size: 0.273·0.250·0.214m | Aspect: 1.3 | Poisson: No
-&MESH ID='test_MESH_split_x_s0' IJK=6,12,14
-      XB=3.500,5.136,4.500,7.500,5.500,8.500 FYI='Test info' /
-Cell Qty: 840 | Size: 0.273·0.250·0.214m | Aspect: 1.3 | Poisson: No
-&MESH ID='test_MESH_split_x_s1' IJK=5,12,14
-      XB=5.136,6.500,4.500,7.500,5.500,8.500 FYI='Test info' /
+    res = ob.to_fds_list(bpy.context).to_string()
+    fds_string = """
+Cell Qty: 1008 | Size: 0.091·0.083·0.071m | Aspect: 1.3 | Poisson: No
+&MESH ID='Test_s0' IJK=6,12,14 XB=4.500,5.045,5.500,6.500,6.500,7.500 FYI='Fyi' /
+Cell Qty: 840 | Size: 0.091·0.083·0.071m | Aspect: 1.3 | Poisson: No
+&MESH ID='Test_s1' IJK=5,12,14 XB=5.045,5.500,5.500,6.500,6.500,7.500 FYI='Fyi' /
 """
-    assert fds_string == expected_fds_string[1:-1]
+    _remove_ob(ob)
+    assert res == fds_string[1:-1]
 
 
-def test_MESH_split_y():
-    ob = _create_mesh_ob("test_MESH_split_y")
+def test_split_y():
+    ob = _create_ob()
     ob.bf_mesh_nsplits = 1, 3, 1
     ob.bf_mesh_nsplits_export = True
-    fds_string = ob.to_fds_list(bpy.context).to_string()
-    expected_fds_string = """
-Cell Qty: 616 | Size: 0.273·0.250·0.214m | Aspect: 1.3 | Poisson: No
-&MESH ID='test_MESH_split_y_s0' IJK=11,4,14
-      XB=3.500,6.500,4.500,5.500,5.500,8.500 FYI='Test info' /
-Cell Qty: 616 | Size: 0.273·0.250·0.214m | Aspect: 1.3 | Poisson: No
-&MESH ID='test_MESH_split_y_s1' IJK=11,4,14
-      XB=3.500,6.500,5.500,6.500,5.500,8.500 FYI='Test info' /
-Cell Qty: 616 | Size: 0.273·0.250·0.214m | Aspect: 1.3 | Poisson: No
-&MESH ID='test_MESH_split_y_s2' IJK=11,4,14
-      XB=3.500,6.500,6.500,7.500,5.500,8.500 FYI='Test info' /
+    res = ob.to_fds_list(bpy.context).to_string()
+    fds_string = """
+Cell Qty: 616 | Size: 0.091·0.083·0.071m | Aspect: 1.3 | Poisson: No
+&MESH ID='Test_s0' IJK=11,4,14 XB=4.500,5.500,5.500,5.833,6.500,7.500 FYI='Fyi' /
+Cell Qty: 616 | Size: 0.091·0.083·0.071m | Aspect: 1.3 | Poisson: No
+&MESH ID='Test_s1' IJK=11,4,14 XB=4.500,5.500,5.833,6.167,6.500,7.500 FYI='Fyi' /
+Cell Qty: 616 | Size: 0.091·0.083·0.071m | Aspect: 1.3 | Poisson: No
+&MESH ID='Test_s2' IJK=11,4,14 XB=4.500,5.500,6.167,6.500,6.500,7.500 FYI='Fyi' /
 """
-    assert fds_string == expected_fds_string[1:-1]
+    _remove_ob(ob)
+    assert res == fds_string[1:-1]
 
 
-def test_MESH_split_z():
-    ob = _create_mesh_ob("test_MESH_split_z")
-    ob.bf_mesh_nsplits = 1, 1, 4
+def test_split_z():
+    ob = _create_ob()
+    ob.bf_mesh_nsplits = 1, 1, 3
     ob.bf_mesh_nsplits_export = True
-    fds_string = ob.to_fds_list(bpy.context).to_string()
-    expected_fds_string = """
-Cell Qty: 528 | Size: 0.273·0.250·0.214m | Aspect: 1.3 | Poisson: No
-&MESH ID='test_MESH_split_z_s0' IJK=11,12,4
-      XB=3.500,6.500,4.500,7.500,5.500,6.357 FYI='Test info' /
-Cell Qty: 528 | Size: 0.273·0.250·0.214m | Aspect: 1.3 | Poisson: No
-&MESH ID='test_MESH_split_z_s1' IJK=11,12,4
-      XB=3.500,6.500,4.500,7.500,6.357,7.214 FYI='Test info' /
-Cell Qty: 396 | Size: 0.273·0.250·0.214m | Aspect: 1.3 | Poisson: No
-&MESH ID='test_MESH_split_z_s2' IJK=11,12,3
-      XB=3.500,6.500,4.500,7.500,7.214,7.857 FYI='Test info' /
-Cell Qty: 396 | Size: 0.273·0.250·0.214m | Aspect: 1.3 | Poisson: No
-&MESH ID='test_MESH_split_z_s3' IJK=11,12,3
-      XB=3.500,6.500,4.500,7.500,7.857,8.500 FYI='Test info' /
+    res = ob.to_fds_list(bpy.context).to_string()
+    fds_string = """
+Cell Qty: 660 | Size: 0.091·0.083·0.071m | Aspect: 1.3 | Poisson: No
+&MESH ID='Test_s0' IJK=11,12,5 XB=4.500,5.500,5.500,6.500,6.500,6.857 FYI='Fyi' /
+Cell Qty: 660 | Size: 0.091·0.083·0.071m | Aspect: 1.3 | Poisson: No
+&MESH ID='Test_s1' IJK=11,12,5 XB=4.500,5.500,5.500,6.500,6.857,7.214 FYI='Fyi' /
+Cell Qty: 528 | Size: 0.091·0.083·0.071m | Aspect: 1.3 | Poisson: No
+&MESH ID='Test_s2' IJK=11,12,4 XB=4.500,5.500,5.500,6.500,7.214,7.500 FYI='Fyi' /
 """
-    assert fds_string == expected_fds_string[1:-1]
+    _remove_ob(ob)
+    assert res == fds_string[1:-1]
 
 
-def test_MESH_split_xyz():
-    ob = _create_mesh_ob("test_MESH_split_xyz")
-    ob.bf_mesh_nsplits = 2, 3, 2
+def test_split_xyz():
+    ob = _create_ob()
+    ob.bf_mesh_nsplits = 1, 3, 2
     ob.bf_mesh_nsplits_export = True
-    fds_string = ob.to_fds_list(bpy.context).to_string()
-    expected_fds_string = """
-Cell Qty: 168 | Size: 0.273·0.250·0.214m | Aspect: 1.3 | Poisson: No
-&MESH ID='test_MESH_split_xyz_s0' IJK=6,4,7
-      XB=3.500,5.136,4.500,5.500,5.500,7.000 FYI='Test info' /
-Cell Qty: 168 | Size: 0.273·0.250·0.214m | Aspect: 1.3 | Poisson: No
-&MESH ID='test_MESH_split_xyz_s1' IJK=6,4,7
-      XB=3.500,5.136,4.500,5.500,7.000,8.500 FYI='Test info' /
-Cell Qty: 168 | Size: 0.273·0.250·0.214m | Aspect: 1.3 | Poisson: No
-&MESH ID='test_MESH_split_xyz_s2' IJK=6,4,7
-      XB=3.500,5.136,5.500,6.500,5.500,7.000 FYI='Test info' /
-Cell Qty: 168 | Size: 0.273·0.250·0.214m | Aspect: 1.3 | Poisson: No
-&MESH ID='test_MESH_split_xyz_s3' IJK=6,4,7
-      XB=3.500,5.136,5.500,6.500,7.000,8.500 FYI='Test info' /
-Cell Qty: 168 | Size: 0.273·0.250·0.214m | Aspect: 1.3 | Poisson: No
-&MESH ID='test_MESH_split_xyz_s4' IJK=6,4,7
-      XB=3.500,5.136,6.500,7.500,5.500,7.000 FYI='Test info' /
-Cell Qty: 168 | Size: 0.273·0.250·0.214m | Aspect: 1.3 | Poisson: No
-&MESH ID='test_MESH_split_xyz_s5' IJK=6,4,7
-      XB=3.500,5.136,6.500,7.500,7.000,8.500 FYI='Test info' /
-Cell Qty: 140 | Size: 0.273·0.250·0.214m | Aspect: 1.3 | Poisson: No
-&MESH ID='test_MESH_split_xyz_s6' IJK=5,4,7
-      XB=5.136,6.500,4.500,5.500,5.500,7.000 FYI='Test info' /
-Cell Qty: 140 | Size: 0.273·0.250·0.214m | Aspect: 1.3 | Poisson: No
-&MESH ID='test_MESH_split_xyz_s7' IJK=5,4,7
-      XB=5.136,6.500,4.500,5.500,7.000,8.500 FYI='Test info' /
-Cell Qty: 140 | Size: 0.273·0.250·0.214m | Aspect: 1.3 | Poisson: No
-&MESH ID='test_MESH_split_xyz_s8' IJK=5,4,7
-      XB=5.136,6.500,5.500,6.500,5.500,7.000 FYI='Test info' /
-Cell Qty: 140 | Size: 0.273·0.250·0.214m | Aspect: 1.3 | Poisson: No
-&MESH ID='test_MESH_split_xyz_s9' IJK=5,4,7
-      XB=5.136,6.500,5.500,6.500,7.000,8.500 FYI='Test info' /
-Cell Qty: 140 | Size: 0.273·0.250·0.214m | Aspect: 1.3 | Poisson: No
-&MESH ID='test_MESH_split_xyz_s10' IJK=5,4,7
-      XB=5.136,6.500,6.500,7.500,5.500,7.000 FYI='Test info' /
-Cell Qty: 140 | Size: 0.273·0.250·0.214m | Aspect: 1.3 | Poisson: No
-&MESH ID='test_MESH_split_xyz_s11' IJK=5,4,7
-      XB=5.136,6.500,6.500,7.500,7.000,8.500 FYI='Test info' /
+    res = ob.to_fds_list(bpy.context).to_string()
+    fds_string = """
+Cell Qty: 308 | Size: 0.091·0.083·0.071m | Aspect: 1.3 | Poisson: No
+&MESH ID='Test_s0' IJK=11,4,7 XB=4.500,5.500,5.500,5.833,6.500,7.000 FYI='Fyi' /
+Cell Qty: 308 | Size: 0.091·0.083·0.071m | Aspect: 1.3 | Poisson: No
+&MESH ID='Test_s1' IJK=11,4,7 XB=4.500,5.500,5.500,5.833,7.000,7.500 FYI='Fyi' /
+Cell Qty: 308 | Size: 0.091·0.083·0.071m | Aspect: 1.3 | Poisson: No
+&MESH ID='Test_s2' IJK=11,4,7 XB=4.500,5.500,5.833,6.167,6.500,7.000 FYI='Fyi' /
+Cell Qty: 308 | Size: 0.091·0.083·0.071m | Aspect: 1.3 | Poisson: No
+&MESH ID='Test_s3' IJK=11,4,7 XB=4.500,5.500,5.833,6.167,7.000,7.500 FYI='Fyi' /
+Cell Qty: 308 | Size: 0.091·0.083·0.071m | Aspect: 1.3 | Poisson: No
+&MESH ID='Test_s4' IJK=11,4,7 XB=4.500,5.500,6.167,6.500,6.500,7.000 FYI='Fyi' /
+Cell Qty: 308 | Size: 0.091·0.083·0.071m | Aspect: 1.3 | Poisson: No
+&MESH ID='Test_s5' IJK=11,4,7 XB=4.500,5.500,6.167,6.500,7.000,7.500 FYI='Fyi' /
 """
-    assert fds_string == expected_fds_string[1:-1]
+    _remove_ob(ob)
+    assert res == fds_string[1:-1]
 
 
-def test_MESH_MULT_dx():
-    ob = _create_mesh_ob("test_MESH_MULT_dx")
-    ob.bf_mult_export = True
-    ob.bf_mult_dx = 3.0
-    ob.bf_mult_i_upper = 3
-    fds_string = ob.to_fds_list(bpy.context).to_string()
-    expected_fds_string = """
-Cell Qty: 1848 | Size: 0.273·0.250·0.214m | Aspect: 1.3 | Poisson: No
-&MESH ID='test_MESH_MULT_dx_i0_j0_k0' IJK=11,12,14
-      XB=3.500,6.500,4.500,7.500,5.500,8.500 FYI='Test info' /
-Cell Qty: 1848 | Size: 0.273·0.250·0.214m | Aspect: 1.3 | Poisson: No
-&MESH ID='test_MESH_MULT_dx_i1_j0_k0' IJK=11,12,14
-      XB=6.500,9.500,4.500,7.500,5.500,8.500 FYI='Test info' /
-Cell Qty: 1848 | Size: 0.273·0.250·0.214m | Aspect: 1.3 | Poisson: No
-&MESH ID='test_MESH_MULT_dx_i2_j0_k0' IJK=11,12,14
-      XB=9.500,12.500,4.500,7.500,5.500,8.500 FYI='Test info' /
-Cell Qty: 1848 | Size: 0.273·0.250·0.214m | Aspect: 1.3 | Poisson: No
-&MESH ID='test_MESH_MULT_dx_i3_j0_k0' IJK=11,12,14
-      XB=12.500,15.500,4.500,7.500,5.500,8.500 FYI='Test info' /
-"""
-    assert fds_string == expected_fds_string[1:-1]
-
-
-def test_MESH_MULT_dx_dx0():
-    ob = _create_mesh_ob("test_MESH_MULT_dx_dx0")
+def test_MULT_dx_dx0():
+    ob = _create_ob()
     ob.bf_mult_export = True
     ob.bf_mult_dx = 3.0
     ob.bf_mult_dx0 = 1.0
     ob.bf_mult_i_lower = 1
     ob.bf_mult_i_upper = 3
-    fds_string = ob.to_fds_list(bpy.context).to_string()
-    expected_fds_string = """
-Cell Qty: 1848 | Size: 0.273·0.250·0.214m | Aspect: 1.3 | Poisson: No
-&MESH ID='test_MESH_MULT_dx_dx0_i1_j0_k0' IJK=11,12,14
-      XB=7.500,10.500,4.500,7.500,5.500,8.500 FYI='Test info' /
-Cell Qty: 1848 | Size: 0.273·0.250·0.214m | Aspect: 1.3 | Poisson: No
-&MESH ID='test_MESH_MULT_dx_dx0_i2_j0_k0' IJK=11,12,14
-      XB=10.500,13.500,4.500,7.500,5.500,8.500 FYI='Test info' /
-Cell Qty: 1848 | Size: 0.273·0.250·0.214m | Aspect: 1.3 | Poisson: No
-&MESH ID='test_MESH_MULT_dx_dx0_i3_j0_k0' IJK=11,12,14
-      XB=13.500,16.500,4.500,7.500,5.500,8.500 FYI='Test info' /
+    res = ob.to_fds_list(bpy.context).to_string()
+    fds_string = """
+Cell Qty: 1848 | Size: 0.091·0.083·0.071m | Aspect: 1.3 | Poisson: No
+&MESH ID='Test_i1_j0_k0' IJK=11,12,14 XB=8.500,9.500,5.500,6.500,6.500,7.500
+      FYI='Fyi' /
+Cell Qty: 1848 | Size: 0.091·0.083·0.071m | Aspect: 1.3 | Poisson: No
+&MESH ID='Test_i2_j0_k0' IJK=11,12,14 XB=11.500,12.500,5.500,6.500,6.500,7.500
+      FYI='Fyi' /
+Cell Qty: 1848 | Size: 0.091·0.083·0.071m | Aspect: 1.3 | Poisson: No
+&MESH ID='Test_i3_j0_k0' IJK=11,12,14 XB=14.500,15.500,5.500,6.500,6.500,7.500
+      FYI='Fyi' /
 """
-    assert fds_string == expected_fds_string[1:-1]
+    _remove_ob(ob)
+    assert res == fds_string[1:-1]
 
 
-def test_MESH_MULT_dy_dy0():
-    ob = _create_mesh_ob("test_MESH_MULT_dy_dy0")
+def test_MULT_dy_dy0():
+    ob = _create_ob()
     ob.bf_mult_export = True
     ob.bf_mult_dy = 3.0
     ob.bf_mult_dy0 = 1.0
@@ -185,26 +139,27 @@ def test_MESH_MULT_dy_dy0():
     ob.bf_mult_j_lower_skip = 3
     ob.bf_mult_j_upper_skip = 5
     ob.bf_mult_j_upper = 7
-    fds_string = ob.to_fds_list(bpy.context).to_string()
-    expected_fds_string = """
-Cell Qty: 1848 | Size: 0.273·0.250·0.214m | Aspect: 1.3 | Poisson: No
-&MESH ID='test_MESH_MULT_dy_dy0_i0_j1_k0' IJK=11,12,14
-      XB=3.500,6.500,8.500,11.500,5.500,8.500 FYI='Test info' /
-Cell Qty: 1848 | Size: 0.273·0.250·0.214m | Aspect: 1.3 | Poisson: No
-&MESH ID='test_MESH_MULT_dy_dy0_i0_j2_k0' IJK=11,12,14
-      XB=3.500,6.500,11.500,14.500,5.500,8.500 FYI='Test info' /
-Cell Qty: 1848 | Size: 0.273·0.250·0.214m | Aspect: 1.3 | Poisson: No
-&MESH ID='test_MESH_MULT_dy_dy0_i0_j6_k0' IJK=11,12,14
-      XB=3.500,6.500,23.500,26.500,5.500,8.500 FYI='Test info' /
-Cell Qty: 1848 | Size: 0.273·0.250·0.214m | Aspect: 1.3 | Poisson: No
-&MESH ID='test_MESH_MULT_dy_dy0_i0_j7_k0' IJK=11,12,14
-      XB=3.500,6.500,26.500,29.500,5.500,8.500 FYI='Test info' /
+    res = ob.to_fds_list(bpy.context).to_string()
+    fds_string = """
+Cell Qty: 1848 | Size: 0.091·0.083·0.071m | Aspect: 1.3 | Poisson: No
+&MESH ID='Test_i0_j1_k0' IJK=11,12,14 XB=4.500,5.500,9.500,10.500,6.500,7.500
+      FYI='Fyi' /
+Cell Qty: 1848 | Size: 0.091·0.083·0.071m | Aspect: 1.3 | Poisson: No
+&MESH ID='Test_i0_j2_k0' IJK=11,12,14 XB=4.500,5.500,12.500,13.500,6.500,7.500
+      FYI='Fyi' /
+Cell Qty: 1848 | Size: 0.091·0.083·0.071m | Aspect: 1.3 | Poisson: No
+&MESH ID='Test_i0_j6_k0' IJK=11,12,14 XB=4.500,5.500,24.500,25.500,6.500,7.500
+      FYI='Fyi' /
+Cell Qty: 1848 | Size: 0.091·0.083·0.071m | Aspect: 1.3 | Poisson: No
+&MESH ID='Test_i0_j7_k0' IJK=11,12,14 XB=4.500,5.500,27.500,28.500,6.500,7.500
+      FYI='Fyi' /
 """
-    assert fds_string == expected_fds_string[1:-1]
+    _remove_ob(ob)
+    assert res == fds_string[1:-1]
 
 
-def test_MESH_MULT_dz_dz0():
-    ob = _create_mesh_ob("test_MESH_MULT_dz_dz0")
+def test_MULT_dz_dz0():
+    ob = _create_ob()
     ob.bf_mult_export = True
     ob.bf_mult_dz = 3.0
     ob.bf_mult_dz0 = 1.0
@@ -212,65 +167,63 @@ def test_MESH_MULT_dz_dz0():
     ob.bf_mult_k_lower_skip = 3
     ob.bf_mult_k_upper_skip = 5
     ob.bf_mult_k_upper = 7
-    fds_string = ob.to_fds_list(bpy.context).to_string()
-    expected_fds_string = """
-Cell Qty: 1848 | Size: 0.273·0.250·0.214m | Aspect: 1.3 | Poisson: No
-&MESH ID='test_MESH_MULT_dz_dz0_i0_j0_k1' IJK=11,12,14
-      XB=3.500,6.500,4.500,7.500,9.500,12.500 FYI='Test info' /
-Cell Qty: 1848 | Size: 0.273·0.250·0.214m | Aspect: 1.3 | Poisson: No
-&MESH ID='test_MESH_MULT_dz_dz0_i0_j0_k2' IJK=11,12,14
-      XB=3.500,6.500,4.500,7.500,12.500,15.500 FYI='Test info' /
-Cell Qty: 1848 | Size: 0.273·0.250·0.214m | Aspect: 1.3 | Poisson: No
-&MESH ID='test_MESH_MULT_dz_dz0_i0_j0_k6' IJK=11,12,14
-      XB=3.500,6.500,4.500,7.500,24.500,27.500 FYI='Test info' /
-Cell Qty: 1848 | Size: 0.273·0.250·0.214m | Aspect: 1.3 | Poisson: No
-&MESH ID='test_MESH_MULT_dz_dz0_i0_j0_k7' IJK=11,12,14
-      XB=3.500,6.500,4.500,7.500,27.500,30.500 FYI='Test info' /
+    res = ob.to_fds_list(bpy.context).to_string()
+    fds_string = """
+Cell Qty: 1848 | Size: 0.091·0.083·0.071m | Aspect: 1.3 | Poisson: No
+&MESH ID='Test_i0_j0_k1' IJK=11,12,14 XB=4.500,5.500,5.500,6.500,10.500,11.500
+      FYI='Fyi' /
+Cell Qty: 1848 | Size: 0.091·0.083·0.071m | Aspect: 1.3 | Poisson: No
+&MESH ID='Test_i0_j0_k2' IJK=11,12,14 XB=4.500,5.500,5.500,6.500,13.500,14.500
+      FYI='Fyi' /
+Cell Qty: 1848 | Size: 0.091·0.083·0.071m | Aspect: 1.3 | Poisson: No
+&MESH ID='Test_i0_j0_k6' IJK=11,12,14 XB=4.500,5.500,5.500,6.500,25.500,26.500
+      FYI='Fyi' /
+Cell Qty: 1848 | Size: 0.091·0.083·0.071m | Aspect: 1.3 | Poisson: No
+&MESH ID='Test_i0_j0_k7' IJK=11,12,14 XB=4.500,5.500,5.500,6.500,28.500,29.500
+      FYI='Fyi' /
 """
-    assert fds_string == expected_fds_string[1:-1]
+    _remove_ob(ob)
+    assert res == fds_string[1:-1]
 
 
-def test_MESH_import():
-    imported_fds_string = """
-&MESH ID='test_MESH_import' IJK=24,24,24, XB=-0.12,-0.06,-0.12,-0.06,-0.12,-0.06, MULT_ID='mesh' /
+def test_import():
+    import_fds_string = """
+&MESH ID='Test' IJK=24,24,24, XB=-0.12,-0.06,-0.12,-0.06,-0.12,-0.06, MULT_ID='mesh' /
 &MULT ID='mesh', DX=0.06, DY=0.06, DZ=0.06, I_UPPER=1, J_UPPER=1, K_UPPER=1 /
 """
     context = bpy.context
     scene = context.scene
-    scene.from_fds(context, f90_namelists=imported_fds_string)
-    ob = bpy.data.objects["test_MESH_import"]
-    fds_string = ob.to_fds_list(bpy.context).to_string()
-    expected_fds_string = """
+    scene.from_fds(context, f90_namelists=import_fds_string)
+    ob = bpy.data.objects["Test"]
+    res = ob.to_fds_list(bpy.context).to_string()
+    fds_string = """
 Cell Qty: 13824 | Size: 0.002·0.002·0.002m | Aspect: 1.0 | Poisson: Yes
-&MESH ID='test_MESH_import_i0_j0_k0' IJK=24,24,24
+&MESH ID='Test_i0_j0_k0' IJK=24,24,24
       XB=-0.120,-0.060,-0.120,-0.060,-0.120,-0.060 /
 Cell Qty: 13824 | Size: 0.002·0.002·0.002m | Aspect: 1.0 | Poisson: Yes
-&MESH ID='test_MESH_import_i0_j0_k1' IJK=24,24,24
+&MESH ID='Test_i0_j0_k1' IJK=24,24,24
       XB=-0.120,-0.060,-0.120,-0.060,-0.060,0.000 /
 Cell Qty: 13824 | Size: 0.002·0.002·0.002m | Aspect: 1.0 | Poisson: Yes
-&MESH ID='test_MESH_import_i0_j1_k0' IJK=24,24,24
+&MESH ID='Test_i0_j1_k0' IJK=24,24,24
       XB=-0.120,-0.060,-0.060,0.000,-0.120,-0.060 /
 Cell Qty: 13824 | Size: 0.002·0.002·0.002m | Aspect: 1.0 | Poisson: Yes
-&MESH ID='test_MESH_import_i0_j1_k1' IJK=24,24,24
-      XB=-0.120,-0.060,-0.060,0.000,-0.060,0.000 /
+&MESH ID='Test_i0_j1_k1' IJK=24,24,24 XB=-0.120,-0.060,-0.060,0.000,-0.060,0.000 /
 Cell Qty: 13824 | Size: 0.002·0.002·0.002m | Aspect: 1.0 | Poisson: Yes
-&MESH ID='test_MESH_import_i1_j0_k0' IJK=24,24,24
+&MESH ID='Test_i1_j0_k0' IJK=24,24,24
       XB=-0.060,0.000,-0.120,-0.060,-0.120,-0.060 /
 Cell Qty: 13824 | Size: 0.002·0.002·0.002m | Aspect: 1.0 | Poisson: Yes
-&MESH ID='test_MESH_import_i1_j0_k1' IJK=24,24,24
-      XB=-0.060,0.000,-0.120,-0.060,-0.060,0.000 /
+&MESH ID='Test_i1_j0_k1' IJK=24,24,24 XB=-0.060,0.000,-0.120,-0.060,-0.060,0.000 /
 Cell Qty: 13824 | Size: 0.002·0.002·0.002m | Aspect: 1.0 | Poisson: Yes
-&MESH ID='test_MESH_import_i1_j1_k0' IJK=24,24,24
-      XB=-0.060,0.000,-0.060,0.000,-0.120,-0.060 /
+&MESH ID='Test_i1_j1_k0' IJK=24,24,24 XB=-0.060,0.000,-0.060,0.000,-0.120,-0.060 /
 Cell Qty: 13824 | Size: 0.002·0.002·0.002m | Aspect: 1.0 | Poisson: Yes
-&MESH ID='test_MESH_import_i1_j1_k1' IJK=24,24,24
-      XB=-0.060,0.000,-0.060,0.000,-0.060,0.000 /
+&MESH ID='Test_i1_j1_k1' IJK=24,24,24 XB=-0.060,0.000,-0.060,0.000,-0.060,0.000 /
 """
-    assert fds_string == expected_fds_string[1:-1]
+    _remove_ob(ob)
+    assert res == fds_string[1:-1]
 
 
-def test_MESH_bf_set_suggested_mesh_cell_size():
-    ob = _create_mesh_ob("test_MESH_bf_set_suggested_mesh_cell_size")
+def test_bf_set_suggested_mesh_cell_size():
+    ob = _create_ob()
     bpy.ops.object.bf_set_suggested_mesh_cell_size(
         bf_max_hrr=2000,
         bf_ncell=8,
@@ -285,50 +238,50 @@ def test_MESH_bf_set_suggested_mesh_cell_size():
     # density: 1.204 kg/m³, Cp: 1.005 KJ/(kg·K), temperature: 25.0°C, gravity: 9.81 m/s²,
     # then the characteristic fire diameter D* is calculated as: 1.257 m
     # and the cell size range for D*/dx ratio between 4 and 16 is: 0.079 ÷ 0.314 m
-    fds_string = ob.to_fds_list(bpy.context).to_string()
-    expected_fds_string = """
-Cell Qty: 7600 | Size: 0.158·0.150·0.150m | Aspect: 1.1 | Poisson: Yes
-&MESH ID='test_MESH_bf_set_suggested_mesh_cell_size' FYI='Test info'
-      IJK=19,20,20 XB=3.500,6.500,4.500,7.500,5.500,8.500 /
+    res = ob.to_fds_list(bpy.context).to_string()
+    fds_string = """
+Cell Qty: 216 | Size: 0.167·0.167·0.167m | Aspect: 1.0 | Poisson: Yes
+&MESH ID='Test' FYI='Fyi' IJK=6,6,6 XB=4.500,5.500,5.500,6.500,6.500,7.500 /
 """
-    assert fds_string == expected_fds_string[1:-1]
+    _remove_ob(ob)
+    assert res == fds_string[1:-1]
 
 
-def test_MESH_bf_set_mesh_cell_size():
-    ob = _create_mesh_ob("test_MESH_bf_set_mesh_cell_size")
+def test_bf_set_mesh_cell_size():
+    ob = _create_ob()
     bpy.ops.object.bf_set_mesh_cell_size(
-        bf_cell_sizes=(0.23, 0.23, 0.23),
+        bf_cell_sizes=(0.07, 0.07, 0.07),
         bf_poisson_restriction=False,
     )
-    fds_string = ob.to_fds_list(bpy.context).to_string()
-    expected_fds_string = """
-Cell Qty: 2197 | Size: 0.231·0.231·0.231m | Aspect: 1.0 | Poisson: No
-&MESH ID='test_MESH_bf_set_mesh_cell_size' FYI='Test info' IJK=13,13,13
-      XB=3.500,6.500,4.500,7.500,5.500,8.500 /
+    res = ob.to_fds_list(bpy.context).to_string()
+    fds_string = """
+Cell Qty: 2744 | Size: 0.071·0.071·0.071m | Aspect: 1.0 | Poisson: No
+&MESH ID='Test' FYI='Fyi' IJK=14,14,14 XB=4.500,5.500,5.500,6.500,6.500,7.500 /
 """
-    assert fds_string == expected_fds_string[1:-1]
+    _remove_ob(ob)
+    assert res == fds_string[1:-1]
 
 
-def test_MESH_bf_set_mesh_cell_size_w_Poisson():
-    ob = _create_mesh_ob("test_MESH_bf_set_mesh_cell_size_w_Poisson")
+def test_bf_set_mesh_cell_size_w_Poisson():
+    ob = _create_ob()
     bpy.ops.object.bf_set_mesh_cell_size(
-        bf_cell_sizes=(0.23, 0.23, 0.23),
+        bf_cell_sizes=(0.07, 0.07, 0.07),
         bf_poisson_restriction=True,
     )
-    fds_string = ob.to_fds_list(bpy.context).to_string()
-    expected_fds_string = """
-Cell Qty: 2925 | Size: 0.231·0.200·0.200m | Aspect: 1.2 | Poisson: Yes
-&MESH ID='test_MESH_bf_set_mesh_cell_size_w_Poisson' FYI='Test info'
-      IJK=13,15,15 XB=3.500,6.500,4.500,7.500,5.500,8.500 /
+    res = ob.to_fds_list(bpy.context).to_string()
+    fds_string = """
+Cell Qty: 3150 | Size: 0.071·0.067·0.067m | Aspect: 1.1 | Poisson: Yes
+&MESH ID='Test' FYI='Fyi' IJK=14,15,15 XB=4.500,5.500,5.500,6.500,6.500,7.500 /
 """
-    assert fds_string == expected_fds_string[1:-1]
+    _remove_ob(ob)
+    assert res == fds_string[1:-1]
 
 
-def test_MESH_bf_align_to_mesh():  # test operator
+def test_bf_align_to_mesh():  # test operator  # FIXME
     pass
 
 
-def test_MESH_align_meshes():
+def test_align_meshes():
     from bl_ext.user_default.bfds.lang.ON_MESH import align_meshes
 
     # reference mesh: rijk, rxb
@@ -373,42 +326,45 @@ def test_MESH_align_meshes():
     assert msg == "increased ref size along x axis, increased ref size along y axis"
 
 
-def test_MESH_calc_meshes():
+def test_calc_meshes():
     from bl_ext.user_default.bfds.lang.ON_MESH import calc_meshes
 
     assert tuple(calc_meshes.get_factor(142)) == (1, 2, 71)
     assert calc_meshes.get_n_for_poisson(28) == 30
     assert calc_meshes.get_poisson_ijk((11, 11, 13)) == (11, 12, 15)
+    assert calc_meshes.get_cell_aspect(cell_sizes=(0.50, 0.75, 1.00)) == 2.0
 
-    context = bpy.context
-    ob = _create_mesh_ob("test_MESH_calc_meshes")
-    desired_cs = (0.5, 0.7, 0.9)
-    poisson = True
-    res = calc_meshes.get_ijk_from_desired_cs(context, ob, desired_cs, poisson)
-    assert res == (6, 4, 3)
+    ob = _create_ob()
+    res = calc_meshes.get_ijk_from_desired_cs(
+        context=bpy.context, ob=ob, desired_cs=(0.079, 0.079, 0.079), poisson=True
+    )
+    _remove_ob(ob)
+    assert res == (13, 15, 15)
 
-    res = calc_meshes.get_cell_sizes(context, ob)
-    assert res == (0.2727272727272727, 0.25, 0.21428571428571427)
+    ob = _create_ob()
+    res = calc_meshes.get_cell_sizes(context=bpy.context, ob=ob)
+    _remove_ob(ob)
+    assert res == (0.09090909090909091, 0.08333333333333333, 0.07142857142857142)
 
-    assert calc_meshes.get_mesh_geometry(context, ob) == (
-        ("test_MESH_calc_meshes",),  # hids
+    ob = _create_ob()
+    res = calc_meshes.get_mesh_geometry(context=bpy.context, ob=ob)
+    _remove_ob(ob)
+    assert res == (
+        ("Test",),  # hids
         [(11, 12, 14)],  # ijks
-        [(3.5, 6.5, 4.5, 7.5, 5.5, 8.5)],  # xbs
+        [(4.5, 5.5, 5.5, 6.5, 6.5, 7.5)],  # xbs
         1,  # nmesh
         1,  # nsplit
         1,  # nmult
         1848,  # ncell_tot
         1848,  # ncell
-        (0.2727272727272727, 0.25, 0.21428571428571427),  # cs
-        1.2727272727272727,  # aspect
+        (0.09090909090909091, 0.08333333333333333, 0.07142857142857142),  # cs
+        1.272727272727273,  # aspect
         "No",  # has_good_ijk
     )
 
-    cell_sizes = 0.50, 0.75, 1.00
-    assert calc_meshes.get_cell_aspect(cell_sizes) == 2.0
 
-
-def test_MESH_split_mesh():
+def test_split_mesh():
     from bl_ext.user_default.bfds.lang.ON_MESH import split_mesh
 
     assert split_mesh.split_cells(ncell=10, nsplit=3) == [4, 3, 3]  # ncells
