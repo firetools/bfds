@@ -127,7 +127,7 @@ class SCENE_OT_bf_run_fds(Operator):
         command = term_command.replace("{c}", fds_command)
 
         # Run
-        log.info(f"Run FDS:\n<{command}>")
+        log.info(f"Run external FDS:\n<{command}>")
         os.system(command)
 
         # Close
@@ -285,7 +285,7 @@ class SCENE_OT_bf_run_smv(Operator):
         command = term_command.replace("{c}", smv_command)
 
         # Run
-        log.info(f"Run Smokeview:\n<{command}>")
+        log.info(f"Run external Smokeview:\n<{command}>")
         os.system(command)
 
         # Close

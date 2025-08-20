@@ -40,7 +40,7 @@ class BFScene:
         @param save: if True, save to disk.
         @return FDS formatted string (eg. "&OBST ID='Test' /"), or None.
         """
-        log.info(f"Export from Scene {self.name}...")
+        log.debug(f"Export from Scene {self.name}...")
         text = self.to_fds_list(context=context, full=full).to_string()
         if save:
             filepath = utils.io.transform_rbl_to_abs(
@@ -49,9 +49,9 @@ class BFScene:
                 name=self.name,
                 extension=".fds",
             )
-            log.info(f"Save to {filepath}...")
+            log.debug(f"Save Scene {self.name} to {filepath}...")
             utils.io.write_txt_file(filepath, text)
-        log.info("Done!")
+        log.debug("Done!")
         return text
 
     def from_fds(
@@ -70,7 +70,7 @@ class BFScene:
         @param fds_list: FDSList of FDSNamelists.
         @param set_tmp: set temporary Objects.
         """
-        log.info(f"Import to Scene {self.name}...")
+        log.debug(f"Import to Scene {self.name}...")
 
         # Set mysef as the right Scene instance in the context
         # this is used by context.scene calls elsewhere
@@ -79,7 +79,7 @@ class BFScene:
 
         # Load fds case from filepath
         if filepath:
-            log.info(f"Load from {filepath}...")
+            log.debug(f"Load from {filepath} to Scene {self.name}...")
             filepath = utils.io.transform_rbl_to_abs(
                 context=context,
                 filepath_rbl=filepath,
@@ -135,7 +135,7 @@ class BFScene:
         if filepath:
             self.bf_config_directory = bf_config_directory
 
-        log.info("Done!")
+        log.debug("Done!")
         return fds_namelist_qty  # feedback
 
     @classmethod
