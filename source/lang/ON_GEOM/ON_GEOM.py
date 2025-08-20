@@ -150,7 +150,11 @@ class OP_GEOM_binary_directory(BFParam):  # This is a Mesh property
     bpy_idname = "bf_geom_binary_directory"
     bpy_prop = StringProperty
     bpy_default = ""  # current fds dir
-    bpy_other = {"subtype": "DIR_PATH", "maxlen": 1024}
+    bpy_other = {
+        "subtype": "DIR_PATH",
+        "maxlen": 1024,
+        "options": {"PATH_SUPPORTS_BLEND_RELATIVE"},
+    }
 
     def check(self, context):
         d = self.element.bf_geom_binary_directory

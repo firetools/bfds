@@ -24,6 +24,16 @@ class ExportSceneToFDS(Operator, ExportHelper):
     filename_ext = ".fds"
     filter_glob: StringProperty(default="*.fds", options={"HIDDEN"})
 
+    # Properties in Blender can't be modified in place
+    # so I reassign it for supporting relative paths
+    filepath: StringProperty(
+        name="File Path",
+        description="Filepath used for exporting the file",
+        maxlen=1024,
+        subtype="FILE_PATH",
+        options={"PATH_SUPPORTS_BLEND_RELATIVE"},
+    )
+
     @classmethod
     def poll(cls, context):
         return context.scene

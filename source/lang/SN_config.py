@@ -36,7 +36,11 @@ class SP_config_directory(BFParam):
     bpy_idname = "bf_config_directory"
     bpy_prop = StringProperty
     # no bpy_default, user choice when saving
-    bpy_other = {"subtype": "DIR_PATH", "maxlen": 1024}
+    bpy_other = {
+        "subtype": "DIR_PATH",
+        "maxlen": 1024,
+        "options": {"PATH_SUPPORTS_BLEND_RELATIVE"},
+    }
 
     def check(self, context):
         value = self.element.bf_config_directory
