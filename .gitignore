@@ -1,6 +1,10 @@
 # Blender backup
 *.blend1
 
+# Images
+*.png
+*.pdf
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
