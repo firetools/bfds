@@ -1,8 +1,8 @@
 schema_version = "1.0.0"
 id = "bfds"
 version = "7.0.0-beta.1"
-name = "NIST FDS fire simulations"
-tagline = "BFDS — Bridging 3D modeling for NIST FDS fire simulations"
+name = "BFDS"
+tagline = "Create and manage NIST FDS fire simulations"
 maintainer = "Emanuele Gissi"
 type = "add-on"
 tags = ["Import-Export"]
