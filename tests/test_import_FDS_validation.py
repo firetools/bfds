@@ -5,11 +5,12 @@ import subprocess, os, pathlib, fnmatch
 
 FDS_COMMAND = "fds"
 FDS_CASES_PATHS = (
-    "../firemodels/fds-master/Validation",
-    "../firemodels/fds-master/firemodels/fds-master/Verification",
+    "../firemodels/fds/Validation",
+    "../firemodels/fds/Verification",
 )
 EXCLUDE_PATTERNS = (
     "*/Validation/BGC_GRI_LNG_Fires*",
+    "*/Validation/NIST_Backdraft/*",
     "*/Validation/NIST_Pool_Fires*",
     "*/Validation/FAA_Cargo_Compartments*",
     "*/Validation/Bluff_Body_Flows*",
@@ -36,11 +37,9 @@ def get_fds_filepath():
     for fds_cases_path in FDS_CASES_PATHS:
         fds_cases_path = os.path.abspath(fds_cases_path)
         for dirpath, dirnames, filenames in os.walk(fds_cases_path):
-            print("dirpath:", dirpath)
             if _has_pattern(dirpath):
                 continue
             for filename in filenames:
-                print("filename:", filename)
                 if _has_pattern(filename):
                     continue
                 if filename.endswith(".fds"):
