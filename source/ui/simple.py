@@ -174,7 +174,9 @@ def toggle_simple_ui(context=None, force_normal=False):
 
     if context is None:
         context = bpy.context
-    if config.ADDON_PREFS.preferences.bf_pref_simplify_ui:
+
+    bf_prefs = context.preferences.addons[config.ADDON_PACKAGE].preferences
+    if bf_prefs.bf_pref_simplify_ui:
         _set_simple_ui()
     else:
         _set_normal_ui()

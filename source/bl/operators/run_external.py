@@ -50,14 +50,11 @@ class WM_OT_bf_restore_default_commands(Operator):
 
     def execute(self, context):
         platform = sys.platform
+        bf_prefs = context.preferences.addons[config.ADDON_PACKAGE].preferences
         if self.bf_command in ("All", "FDS"):
-            config.ADDON_PREFS.preferences.bf_pref_fds_command = config.FDS_COMMAND.get(
-                platform, ""
-            )
+            bf_prefs.bf_pref_fds_command = config.FDS_COMMAND.get(platform, "")
         if self.bf_command in ("All", "Smokeview"):
-            config.ADDON_PREFS.preferences.bf_pref_smv_command = config.SMV_COMMAND.get(
-                platform, ""
-            )
+            bf_prefs.bf_pref_smv_command = config.SMV_COMMAND.get(platform, "")
         # Report
         self.report({"INFO"}, "Default restored")
         return {"FINISHED"}
@@ -109,7 +106,8 @@ class SCENE_OT_bf_run_fds(Operator):
             return {"CANCELLED"}
 
         # Run the fds command
-        cmd = config.ADDON_PREFS.preferences.bf_pref_fds_command
+        bf_prefs = context.preferences.addons[config.ADDON_PACKAGE].preferences
+        cmd = bf_prefs.bf_pref_fds_command
         params = {
             "n": sc.bf_config_mpi_processes_export and sc.bf_config_mpi_processes or 1,
             "t": sc.bf_config_openmp_threads_export
@@ -276,7 +274,8 @@ class SCENE_OT_bf_run_smv(Operator):
             return {"CANCELLED"}
 
         # Run the smv command
-        cmd = config.ADDON_PREFS.preferences.bf_pref_smv_command
+        bf_prefs = context.preferences.addons[config.ADDON_PACKAGE].preferences
+        cmd = bf_prefs.bf_pref_smv_command
         params = {
             "f": smv_filepath,
             "p": smv_path,

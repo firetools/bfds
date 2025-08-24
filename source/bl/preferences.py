@@ -14,7 +14,8 @@ from .. import config
 log = logging.getLogger(__name__)
 
 # Get preference value like this:
-# config.ADDON_PREFS.bf_pref_simplify_ui
+# bf_prefs = context.preferences.addons[config.ADDON_PACKAGE].preferences
+# bf_prefs.bf_pref_simplify_ui
 
 
 def update_bf_pref_simplify_ui(_, context):

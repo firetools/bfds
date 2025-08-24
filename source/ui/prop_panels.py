@@ -33,7 +33,8 @@ def _set_property_panels_visibility(space):
 
 
 def toggle_simple_property_panel():
-    if not config.ADDON_PREFS.preferences.bf_pref_simplify_ui:
+    bf_prefs = bpy.context.preferences.addons[config.ADDON_PACKAGE].preferences
+    if not bf_prefs.bf_pref_simplify_ui:
         return
     log.debug(f"Set visibility of Blender property panels...")
     # Get all spaces of areas of type "PROPERTIES" and set panel visibility

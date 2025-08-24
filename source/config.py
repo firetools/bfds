@@ -17,9 +17,6 @@ ADDON_PATH = os.path.dirname(sys.modules[ADDON_PACKAGE].__file__)
 # See: https://docs.blender.org/manual/en/dev/advanced/extensions/addons.html#local-storage
 # extension_directory = bpy.utils.extension_path_user(__package__, path="", create=True) # FIXME
 ADDON_STARTUP_FILEPATH = os.path.join(ADDON_PATH, "startup.blend")
-ADDON_PREFS = bpy.context.preferences.addons[ADDON_PACKAGE]
-# Get preference value like this:
-# config.ADDON_PREFS.preferences.bf_pref_simplify_ui
 
 
 # Automatic appearance of Blender entities
