@@ -7,7 +7,7 @@ import os, sys, bpy
 # instability or breakage.
 
 
-### Blender addon general properites
+# Blender addon general properites
 
 ADDON_NAME = "BFDS"
 ADDON_VERSION = 7, 0, 0
@@ -22,7 +22,7 @@ ADDON_PREFS = bpy.context.preferences.addons[ADDON_PACKAGE]
 # config.ADDON_PREFS.preferences.bf_pref_simplify_ui
 
 
-### Automatic appearance of Blender entities
+# Automatic appearance of Blender entities
 
 # set automatic Blender Scene appearance
 SET_SCENE_APPEARANCE = True
@@ -34,101 +34,108 @@ SET_MATERIAL_APPEARANCE = True
 
 # Exported decimal positions of floats
 
-## default precision (eg. 3 is .001)
+# default precision (eg. 3 is .001)
 DEFAULT_P = 3
-## length precision, m (eg. 4 is .0001)
+# length precision, m (eg. 4 is .0001)
 LP = 3
-## time precision, s
+# time precision, s
 TIME_P = 1
-## MOVE T34 precision
+# MOVE T34 precision
 T34_P = 6
-## temperature precision, °C
+# temperature precision, °C
 TEMP_P = 1
 
-## velocity tolerance precision, m/s
+# velocity tolerance precision, m/s
 VELOCITY_TOLERANCE_P = 6
 
-## HRR precision, kW/m²
+# HRR precision, kW/m²
 HRR_P = 1
-## density precision, kg/m³
+# density precision, kg/m³
 DENSITY_P = 3
-## gravity m/s²
+# gravity m/s²
 GRAVITY_P = 2
 
-## heat capacity cp, KJ/(kg·K)
+# heat capacity cp, KJ/(kg·K)
 HEAT_CAPACITY_P = 3
-## reaction yield precision, kg/kg
+# reaction yield precision, kg/kg
 YIELD_P = 3
-## heat of combustion precision, KJ/kg
+# heat of combustion precision, KJ/kg
 HOC_P = 1
-## radiative fraction precision
+# radiative fraction precision
 RADIATIVE_FRACTION_P = 2
 
-## geographic latitude longitude precision, degrees
+# geographic latitude longitude precision, degrees
 LATLON_P = 9
-## geographic latitude longitude output precision, degrees
+# geographic latitude longitude output precision, degrees
 LATLONOUT_P = 6
-## UTM easting, northing precision, m
+# UTM easting, northing precision, m
 GEONORTHING_P = 1
-## elevation precision, m
+# elevation precision, m
 GEOELEV_P = 1
-## bearing precision, degrees
+# bearing precision, degrees
 BEARING_P = 1
 
 
 # Formatting of the exported FDS case file
 
-## max number of columns of formatted output
+# max number of columns of formatted output
 MAXLEN = 80
-## number of columns for second line indent
+# number of columns for second line indent
 INDENT = 6
 
 
 # Automatic sanity checks of the geometries,
 # and notation for GEOM exporting
 
-## min allowed edge length for GEOM
+# min allowed edge length for GEOM
 MIN_EDGE_LENGTH = 1e-05
-## min allowed face area for GEOM
+# min allowed face area for GEOM
 MIN_FACE_AREA = 1e-08
-## min intersection length for GEOM
+# min intersection length for GEOM
 MIN_INTERSECTION_LENGTH = 1e-05
-## flat face difference for FACES
+# flat face difference for FACES
 FLAT_DIFFERENCE = 1e-03
-## export GEOM ASCII notation (eg. GEOM VERTS=... FACES=...) instead of bingeom
+# export GEOM ASCII notation (eg. GEOM VERTS=... FACES=...) instead of bingeom
 EXPORT_ASCII_GEOM = False
 
 # Default external commands
 
-## run fds commands
+# run fds commands
 # from sys.platform: linux is any Linux, darwin is any MacOS, win32 is any Windows
-FDS_COMMAND = {
-    "linux": """cd '{p}' && export OMP_NUM_THREADS={t} && mpiexec -n {n} fds '{f}' ; sleep 5 ; exit""",
-    "darwin": """cd '{p}' && export OMP_NUM_THREADS={t} && mpiexec -n {n} fds '{f}' ; sleep 5 ; exit""",
-    "win32": """cd "{p}" && fdsinit && mpiexec -n {n} -env OMP_NUM_THREADS {t} fds "{f}" & timeout 5 & exit""",
+FDS_COMMAND = {  # beware single or double quotes!
+    "linux": """cd '{p}' && export OMP_NUM_THREADS={t} && mpiexec -n {n} fds '{f}' ; sleep 5 ; exit """,
+    "darwin": """cd '{p}' && export OMP_NUM_THREADS={t} && mpiexec -n {n} fds '{f}' ; sleep 5 ; exit """,
+    "win32": """cd "{p}" && fdsinit && mpiexec -n {n} -env OMP_NUM_THREADS {t} fds "{f}" & timeout 5 & exit """,
 }
 
-## run smokeview commands
-SMV_COMMAND = {
-    "linux": """cd '{p}' && smokeview '{f}'""",
-    "darwin": """cd '{p}' && smokeview '{f}'""",
+# run smokeview commands
+SMV_COMMAND = {  # beware single or double quotes!
+    "linux": """cd '{p}' && smokeview '{f}' """,
+    "darwin": """cd '{p}' && smokeview '{f}' """,
     "win32": """cd "{p}" && fdsinit && smokeview "{f}" """,
 }
 
-## run terminal commands
-TERM_COMMAND = {
-    "linux": """gnome-terminal --window --title "FDS" -- bash -c "{c}" """,
-    "darwin": """osascript -e 'tell app "Terminal" to do script "{c}" ' """,
-    "win32": """START "FDS" cmd /c "{c}" """,
-}
+# run terminal commands
+# {title} is replaced by the terminal window title
+# {cmd} is replaced by the executed command
+LINUX_TERM_COMMAND = [
+    """xdg-terminal-exec --title '{title}' -- {cmd} """,  # Proposed standard
+    """x-terminal-emulator --title '{title}' -- {cmd} """,  # Debian/Ubuntu
+    """ptyxis --new-window --title '{title}' -- {cmd} """,  # Gnome, Fedora
+    """gnome-terminal --window --title '{title}' -- {cmd} """,  # Old Gnome, old Fedora
+    """konsole --title '{title}' -- {cmd} """,  # KDE
+    """xfce4-terminal -T '{title}' -x {cmd} """,  # Xfce
+    """lxterminal -t '{title}' -e {cmd} """,  # LXDE
+    """xterm -t '{title}' -e {cmd} """,  # Old but good
+]
 
 
 # Other settings
 
-## number of magnetic cells for MESH alignment (align_meshes.py)
+# number of magnetic cells for MESH alignment (align_meshes.py)
 MAGNET_NCELL = 3
 
-## Default SURF Materials
+# Default SURF Materials
 DEFAULT_MAS = {  # name: diffuse_color
     "INERT": ((0.8, 0.8, 0.2, 1.0),),
     "HVAC": ((0.2, 0.2, 0.8, 0.5),),
@@ -137,7 +144,7 @@ DEFAULT_MAS = {  # name: diffuse_color
     "PERIODIC": ((1.0, 0.0, 1.0, 0.2),),
 }
 
-## Frequently used output QUANTITY
+# Frequently used output QUANTITY
 # from FDS User's guide table:
 # name, units, qtype
 FDS_QUANTITIES = """\
@@ -261,7 +268,7 @@ WALL TEMPERATURE,°C,BD
 WALL THICKNESS,m,BD"""
 
 
-## Color table from FDS source code (data.f90)
+# Color table from FDS source code (data.f90)
 FDS_COLORS = {
     "INVISIBLE": (255, 255, 255),
     "ALICE BLUE": (240, 248, 255),

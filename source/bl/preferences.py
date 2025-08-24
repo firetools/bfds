@@ -42,7 +42,7 @@ class BFPreferences(AddonPreferences):
                 "Run FDS command:",
                 " <{n}> is replaced by the number of MPI processes,",
                 " <{t}> by the number of threads,",
-                " <{f}> by the fds case filepath (eg. /example/case.fds).",
+                " <{f}> by the fds case filepath (eg. /example/case.fds),",
                 " <{p}> by the fds case path (eg. /example/).",
             )
         ),
@@ -56,17 +56,6 @@ class BFPreferences(AddonPreferences):
                 "Open Smokeview command:",
                 " <{f}> is replaced by the smv filepath (eg. /example/case.smv),",
                 " <{p}> by the fds case path (eg. /example/).",
-            )
-        ),
-        default="",
-    )
-
-    bf_pref_term_command: StringProperty(
-        name="Open Terminal",
-        description="\n".join(
-            (
-                "Open terminal command:",
-                " <{c}> is replaced by FDS or Smokeview command.",
             )
         ),
         default="",
@@ -111,12 +100,6 @@ class BFPreferences(AddonPreferences):
         row.operator(
             "wm.bf_restore_default_commands", text="", icon="LOOP_BACK"
         ).bf_command = "Smokeview"
-
-        row = box.row(align=True)
-        row.prop(self, "bf_pref_term_command", text="Terminal")
-        row.operator(
-            "wm.bf_restore_default_commands", text="", icon="LOOP_BACK"
-        ).bf_command = "Terminal"
 
         return layout
 

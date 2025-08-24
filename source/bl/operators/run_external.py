@@ -58,10 +58,6 @@ class WM_OT_bf_restore_default_commands(Operator):
             config.ADDON_PREFS.preferences.bf_pref_smv_command = config.SMV_COMMAND.get(
                 platform, ""
             )
-        if self.bf_command in ("All", "Terminal"):
-            config.ADDON_PREFS.preferences.bf_pref_term_command = (
-                config.TERM_COMMAND.get(platform, "")
-            )
         # Report
         self.report({"INFO"}, "Default restored")
         return {"FINISHED"}
@@ -112,27 +108,29 @@ class SCENE_OT_bf_run_fds(Operator):
             self.report({"ERROR"}, str(err))
             return {"CANCELLED"}
 
-        # Prepare the command
-        fds_command = config.ADDON_PREFS.preferences.bf_pref_fds_command
-        term_command = config.ADDON_PREFS.preferences.bf_pref_term_command
-
-        n = sc.bf_config_mpi_processes_export and sc.bf_config_mpi_processes or 1
-        t = sc.bf_config_openmp_threads_export and sc.bf_config_openmp_threads or 1
-        fds_command = (
-            fds_command.replace("{n}", str(n))
-            .replace("{t}", str(t))
-            .replace("{f}", fds_filepath)
-            .replace("{p}", fds_path)
-        )
-        command = term_command.replace("{c}", fds_command)
-
-        # Run
-        log.info(f"Run external FDS:\n<{command}>")
-        os.system(command)
+        # Run the fds command
+        cmd = config.ADDON_PREFS.preferences.bf_pref_fds_command
+        params = {
+            "n": sc.bf_config_mpi_processes_export and sc.bf_config_mpi_processes or 1,
+            "t": sc.bf_config_openmp_threads_export
+            and sc.bf_config_openmp_threads
+            or 1,
+            "f": fds_filepath,
+            "p": fds_path,
+        }
+        try:
+            utils.run.run_in_terminal(
+                cmd=cmd.format(**params),
+                title=f"FDS",
+            )
+        except Exception as err:
+            w.cursor_modal_restore()
+            self.report({"ERROR"}, str(err))
+            return {"CANCELLED"}
 
         # Close
         w.cursor_modal_restore()
-        self.report({"INFO"}, "See the command prompt")
+        self.report({"INFO"}, "See the terminal window")
         return {"FINISHED"}
 
 
@@ -277,20 +275,25 @@ class SCENE_OT_bf_run_smv(Operator):
             self.report({"ERROR"}, "Run FDS, before opening Smokeview!")
             return {"CANCELLED"}
 
-        # Prepare the command
-        smv_command = config.ADDON_PREFS.preferences.bf_pref_smv_command
-        term_command = config.ADDON_PREFS.preferences.bf_pref_term_command
-
-        smv_command = smv_command.replace("{f}", smv_filepath).replace("{p}", smv_path)
-        command = term_command.replace("{c}", smv_command)
-
-        # Run
-        log.info(f"Run external Smokeview:\n<{command}>")
-        os.system(command)
+        # Run the smv command
+        cmd = config.ADDON_PREFS.preferences.bf_pref_smv_command
+        params = {
+            "f": smv_filepath,
+            "p": smv_path,
+        }
+        try:
+            utils.run.run_in_terminal(
+                cmd=cmd.format(**params),
+                title="Smokeview",
+            )
+        except Exception as err:
+            w.cursor_modal_restore()
+            self.report({"ERROR"}, str(err))
+            return {"CANCELLED"}
 
         # Close
         w.cursor_modal_restore()
-        self.report({"INFO"}, "See the command prompt")
+        self.report({"INFO"}, "See the terminal window")
         return {"FINISHED"}
 
 
