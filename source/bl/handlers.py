@@ -24,73 +24,20 @@ def _load_post(self):
     Run automatic setup after loading a Blender file.
     """
     # Beware: self is None
+
     # Check file format version
     bf_file_version = tuple(bpy.data.scenes[0].bf_file_version)
 
-    if bf_file_version < config.SUPPORTED_FILE_VERSION:
-        context = bpy.context
+    if bf_file_version == (0, 0, 0):
+        # New file, set current file format version
+        for sc in bpy.data.scenes:
+            sc.bf_file_version = config.SUPPORTED_FILE_VERSION
 
-        for ob in bpy.data.objects:
-
-            # Fix old Object export toggle
-            if ob.hide_viewport:
-                ob.hide_render = True
-
-            # Fix old removed namelists (eg. 1017 HVAC)
-            if not ob.bf_namelist_cls:
-                ob.bf_namelist_cls = "ON_other"
-
-            # Fix old DEVC namelist removed params
-            if ob.bf_namelist_cls == "ON_DEVC":
-                op_other = OP_other(ob)
-                if ob.get("bf_devc_setpoint_export") and ob.get("bf_devc_setpoint"):
-                    op_other.set_value(
-                        context, f"SETPOINT={ob['bf_devc_setpoint']:.3f}"
-                    )
-                    ob["bf_devc_setpoint_export"] = False
-                if ob.get("bf_devc_initial_state"):
-                    op_other.set_value(context, "INITIAL_STATE=T")
-                    ob["bf_devc_initial_state"] = False
-                if ob.get("bf_devc_latch"):
-                    op_other.set_value(context, "LATCH=T")
-                    ob["bf_devc_latch"] = False
-
-            # Fix new Object bf_surf_id_export
-            if ob.bf_namelist_cls in ("ON_OBST", "ON_VENT") and ob.active_material:
-                ob.bf_surf_id_export = True
-
-        # Fix old SURF namelist removed params
-        for ma in bpy.data.materials:
-            ma.bf_namelist_cls = "MN_SURF"
-            mp_other = MP_other(ma)
-            if ma.get("bf_thickness_export") and ma.get("bf_thickness"):
-                mp_other.set_value(context, f"THICKNESS={ma['bf_thickness']:.3f}")
-                ma["bf_thickness_export"] = False
-            if ma.get("bf_hrrpua"):
-                mp_other.set_value(context, f"HRRPUA={ma['bf_hrrpua']:.1f}")
-                ma["bf_hrrpua"] = 0.0
-            if ma.get("bf_tau_q"):
-                mp_other.set_value(context, f"TAU_Q={ma['bf_tau_q']:.1f}")
-                ma["bf_tau_q"] = 0.0
-            if ma.get("bf_matl_id_export") and ma.get("bf_matl_id"):
-                mp_other.set_value(context, f"MATL_ID='{ma['bf_matl_id']}'")
-                ma["bf_matl_id_export"] = False
-            if ma.get("bf_ignition_temperature_export") and ma.get(
-                "bf_ignition_temperature"
-            ):
-                mp_other.set_value(
-                    context, f"IGNITION_TEMPERATURE={ma['bf_ignition_temperature']:.1f}"
-                )
-                ma["bf_ignition_temperature_export"] = False
-            if ma.get("bf_backing_export") and ma.get("bf_backing") != "EXPOSED":
-                mp_other.set_value(context, f"BACKING='{ma['bf_backing']}'")
-                ma["bf_backing_export"] = False
-
-        # Inform
+    elif bf_file_version < config.SUPPORTED_FILE_VERSION:
         bpy.ops.wm.bf_dialog(
             "INVOKE_DEFAULT",
             msg="Check your data!",
-            description="This file was created with an old BFDS version.",
+            description="This file was created with an old and unsupported BFDS version.",
             type="ERROR",
         )
 
@@ -117,19 +64,19 @@ def _load_post(self):
 
     # Set default appearances of Scene, Object, Material instances
     context = bpy.context
-    for sc in bpy.data.scenes:
+    for sc in context.scenes:
         # set only once
         BFNamelistSc(sc).set_appearance(context=context)
-    for ob in bpy.data.objects:
+    for ob in context.objects:
         bf_namelist = ob.bf_namelist
         if bf_namelist:
             # config.SET_OBJECT_APPEARANCE is checked in bf_namelist
-            ob.bf_namelist.set_appearance(context=context)
-    for ma in bpy.data.materials:
+            bf_namelist.set_appearance(context=context)
+    for ma in context.materials:
         bf_namelist = ma.bf_namelist
         if bf_namelist:
             # config.SET_MATERIAL_APPEARANCE is checked in bf_namelist
-            ma.bf_namelist.set_appearance(context=context)
+            bf_namelist.set_appearance(context=context)
 
     # Set simplified property panel
     toggle_simple_property_panel()
