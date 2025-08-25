@@ -4,6 +4,7 @@
 BFDS, panel class extensions.
 """
 
+import bpy
 from bpy.types import Panel
 from ..lang.SN_config import SN_config
 from ..lang.SN_HEAD import SN_HEAD
@@ -341,18 +342,27 @@ class VIEW3D_PT_bf_geolocation(Panel):
             col.prop(ob, "location", text="Object")
             row = col.row(align=True)
             row.operator("scene.bf_set_ob_geoloc").show = False
-            row.operator("scene.bf_set_ob_geoloc", text="", icon="URL").show = True
+            if bpy.app.online_access:
+                row.operator("scene.bf_set_ob_geoloc", text="", icon="URL").show = True
+            else:
+                row.label(text="", icon="INTERNET_OFFLINE")
         # 3D Cursor geolocation
         cursor = context.scene.cursor
         col = layout.column(align=True)
         col.prop(cursor, "location", text="3D Cursor")
         row = col.row(align=True)
         row.operator("scene.bf_set_cursor_geoloc").show = False
-        row.operator("scene.bf_set_cursor_geoloc", text="", icon="URL").show = True
+        if bpy.app.online_access:
+            row.operator("scene.bf_set_cursor_geoloc", text="", icon="URL").show = True
+        else:
+            row.label(text="", icon="INTERNET_OFFLINE")
         # Online converter
         col = layout.column()
-        url = "https://epsg.io/transform#s_srs=4326&t_srs=4326"
-        col.operator("wm.url_open", text="Transform Coordinates").url = url
+        if bpy.app.online_access:
+            url = "https://epsg.io/transform#s_srs=4326&t_srs=4326"
+            col.operator("wm.url_open", text="Transform Coordinates").url = url
+        else:
+            col.label(text="Transform Coordinates", icon="INTERNET_OFFLINE")
 
 
 bl_classes = [

@@ -16,7 +16,7 @@ wheels = ["./wheels/f90nml-1.4.5-py2.py3-none-any.whl",]
 
 [permissions]
 files = "Import/export FDS files from/to disk"
-# network = "Need to sync motion-capture data to server"
+network = "Display geographic positions on the OSM website, and convert coordinates using the EPSG.io website."
 # clipboard = "Copy and paste bone transforms"
 
 [build]

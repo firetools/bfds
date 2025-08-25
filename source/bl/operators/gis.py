@@ -88,7 +88,7 @@ class _bf_set_geoloc:
         # Check origin geolocation
         if not sc.bf_misc_export or not sc.bf_origin_export:
             self.report({"ERROR"}, "Undefined location, set origin geolocation in MISC")
-            return {"FINISHED"}
+            return {"CANCELLED"}
         # Get loc, convert to set default
         x, y, _ = self._get_loc(context)
         scale_length = sc.unit_settings.scale_length
@@ -101,10 +101,14 @@ class _bf_set_geoloc:
         lonlat = utm.to_LonLat()
         # Show
         if self.show:
-            url = lonlat.to_url()
-            bpy.ops.wm.url_open(url=url)
-            self.report({"INFO"}, "Geolocation shown")
-            return {"FINISHED"}
+            if bpy.app.online_access:
+                url = lonlat.to_url()
+                bpy.ops.wm.url_open(url=url)
+                self.report({"INFO"}, "Geolocation shown")
+                return {"FINISHED"}
+            else:
+                self.report({"ERROR"}, "Offline mode, cannot show geolocation")
+                return {"CANCELLED"}
         # Set defaults
         self.bf_lon = lonlat.lon
         self.bf_lat = lonlat.lat

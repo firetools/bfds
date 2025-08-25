@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import logging
+import logging, bpy
 from bpy.types import Scene
 from bpy.props import BoolProperty, FloatProperty, StringProperty, IntProperty
 from ..config import BEARING_P, LATLON_P
@@ -69,7 +69,6 @@ class SP_origin_geoname(BFParam):
     def draw(self, context, layout):
         sc = self.element
         exported = sc.bf_origin_export  # TODO cleaner
-        url = utils.gis.LonLat(lon=sc.bf_origin_lon, lat=sc.bf_origin_lat).to_url()
         col = layout.column(align=True, heading="Origin Geolocation")
         row = col.row(align=True)
         sub = row.row(align=True)
@@ -78,7 +77,11 @@ class SP_origin_geoname(BFParam):
         col2.active = exported
         sub = col2.row(align=True)
         sub.prop(sc, "bf_origin_geoname", text="")
-        sub.operator("wm.url_open", text="", icon="URL").url = url
+        if bpy.app.online_access:
+            url = utils.gis.LonLat(lon=sc.bf_origin_lon, lat=sc.bf_origin_lat).to_url()
+            sub.operator("wm.url_open", text="", icon="URL").url = url
+        else:
+            sub.label(icon="INTERNET_OFFLINE")
         col2.prop(sc, "bf_origin_lon")
         col2.prop(sc, "bf_origin_lat")
         col2.prop(sc, "bf_origin_north_bearing")
