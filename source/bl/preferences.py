@@ -32,7 +32,7 @@ class BFPreferences(AddonPreferences):
     bf_pref_simplify_ui: BoolProperty(
         name="Simplify Blender UI",
         description="Simplify Blender user interface",
-        default=True,
+        default=False,
         update=update_bf_pref_simplify_ui,
     )
 
