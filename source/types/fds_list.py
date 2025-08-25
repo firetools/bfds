@@ -4,7 +4,7 @@
 BFDS, Blender list of FDS namelists or parameters.
 """
 
-import re, logging
+import re, logging, f90nml  # TODO FIXME
 from ..config import DEFAULT_P, MAXLEN, INDENT
 from ..utils.text import append_word
 from .bf_exception import BFException
