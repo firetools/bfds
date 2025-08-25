@@ -64,15 +64,15 @@ def _load_post(self):
 
     # Set default appearances of Scene, Object, Material instances
     context = bpy.context
-    for sc in context.scenes:
+    for sc in bpy.data.scenes:
         # set only once
         BFNamelistSc(sc).set_appearance(context=context)
-    for ob in context.objects:
+    for ob in bpy.data.objects:
         bf_namelist = ob.bf_namelist
         if bf_namelist:
             # config.SET_OBJECT_APPEARANCE is checked in bf_namelist
             bf_namelist.set_appearance(context=context)
-    for ma in context.materials:
+    for ma in bpy.data.materials:
         bf_namelist = ma.bf_namelist
         if bf_namelist:
             # config.SET_MATERIAL_APPEARANCE is checked in bf_namelist
