@@ -1,8 +1,8 @@
 #! /usr/bin/env python3
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-BLENDER = "../blender-4.5.0-linux-x64/blender"
-SOURCE_DIR = "./source"
+BLENDER = "./blender"
+SOURCE_DIR = "../source"
 OUTPUT_DIR = "."
 CWD_PATH = "."
 

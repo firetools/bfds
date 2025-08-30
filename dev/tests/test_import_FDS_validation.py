@@ -50,7 +50,7 @@ def get_fds_filepath():
 #     yield "/var/home/egissi/.local/opt/FDS/FDS6/Examples/Pressure_Solver/stairwell.fds"
 
 
-@pytest.mark.skip(reason="Too long!")
+# @pytest.mark.skip(reason="Too long!")
 @pytest.mark.parametrize("fds_filepath", get_fds_filepath())
 def test_run_fds_case(tmp_path, fds_filepath):
     # Open the empty blend file and save it in tmp
