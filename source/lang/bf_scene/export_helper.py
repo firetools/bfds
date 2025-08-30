@@ -83,7 +83,7 @@ def _get_domain(context):
         # Per MPI Process
         ncell, mesh_fds_namelists = bin
         nmesh_tot = len(mesh_fds_namelists)
-        header = f"\n-- MPI Process: <{mpi_process}> | MESH Qty: {nmesh_tot} | Cell Qty: {ncell}"
+        header = f"\n-- MPI Process: {mpi_process} | MESH Qty: {nmesh_tot} | Cell Qty: {ncell}"
         bin_fds_list = FDSList(header=header)
         domain_fds_list.append(bin_fds_list)
         for mesh_fds_namelist in mesh_fds_namelists:

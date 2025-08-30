@@ -33,6 +33,9 @@ class WM_OT_bf_load_bfds_settings(Operator):
         bpy.ops.wm.save_homefile()
         # Load default commands
         bpy.ops.wm.bf_restore_default_commands()
+        # Set simplified UI
+        bf_prefs = context.preferences.addons[config.ADDON_PACKAGE].preferences
+        bf_prefs.bf_pref_simplify_ui = True
         # Save user preferences
         bpy.ops.wm.save_userpref()
         # Open new file (unlink startup)
