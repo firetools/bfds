@@ -155,19 +155,7 @@ class BFScene:
         Unregister related Blender properties.
         @param cls: class to be unregistered.
         """
-        del Scene.bf_file_version
         del Scene.from_fds
         del Scene.to_fds
         del Scene.to_fds_list
         del Scene.bf_namelists
-
-
-# Automatically filled by an handler
-class OP_file_version(BFParam):
-    label = "BFDS File Version"
-    description = "BFDS File Version"
-    bpy_type = Scene
-    bpy_idname = "bf_file_version"
-    bpy_prop = IntVectorProperty
-    bpy_default = (0, 0, 0)
-    bpy_other = {"size": 3}
