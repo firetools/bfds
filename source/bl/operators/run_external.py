@@ -83,6 +83,17 @@ class SCENE_OT_bf_run_fds(Operator):
         w.cursor_modal_set("WAIT")
         sc = context.scene
 
+        # Get the FDS command from user preferences
+        bf_prefs = context.preferences.addons[config.ADDON_PACKAGE].preferences
+        cmd = bf_prefs.bf_pref_fds_command
+        if not cmd:
+            w.cursor_modal_restore()
+            self.report(
+                {"ERROR"},
+                "Set FDS command in Edit > Preferences > Add-ons > BFDS",
+            )
+            return {"CANCELLED"}
+
         # Prepare path
         try:
             fds_filepath = utils.io.transform_rbl_to_abs(
@@ -106,8 +117,6 @@ class SCENE_OT_bf_run_fds(Operator):
             return {"CANCELLED"}
 
         # Run the fds command
-        bf_prefs = context.preferences.addons[config.ADDON_PACKAGE].preferences
-        cmd = bf_prefs.bf_pref_fds_command
         params = {
             "n": sc.bf_config_mpi_processes_export and sc.bf_config_mpi_processes or 1,
             "t": sc.bf_config_openmp_threads_export
@@ -253,6 +262,17 @@ class SCENE_OT_bf_run_smv(Operator):
         w.cursor_modal_set("WAIT")
         sc = context.scene
 
+        # Get the Smokeview command from user preferences
+        bf_prefs = context.preferences.addons[config.ADDON_PACKAGE].preferences
+        cmd = bf_prefs.bf_pref_smv_command
+        if not cmd:
+            w.cursor_modal_restore()
+            self.report(
+                {"ERROR"},
+                "Set Smokeview command in Edit > Preferences > Add-ons > BFDS",
+            )
+            return {"CANCELLED"}
+
         # Prepare path and check file existence
         try:
             smv_filepath = utils.io.transform_rbl_to_abs(
@@ -274,12 +294,7 @@ class SCENE_OT_bf_run_smv(Operator):
             return {"CANCELLED"}
 
         # Run the smv command
-        bf_prefs = context.preferences.addons[config.ADDON_PACKAGE].preferences
-        cmd = bf_prefs.bf_pref_smv_command
-        params = {
-            "f": smv_filepath,
-            "p": smv_path,
-        }
+        params = {"f": smv_filepath, "p": smv_path}
         try:
             utils.run.run_in_terminal(
                 cmd=cmd.format(**params),
