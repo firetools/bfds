@@ -4,16 +4,15 @@
 BFDS, handlers.
 """
 
-import bpy, logging
+import bpy
 from bpy.app.handlers import persistent, load_post, save_pre, depsgraph_update_post
 from bpy.types import Object
-from .. import utils
-from .. import config
-from ..types import BFNamelistSc
 
+from .. import utils, config
+from ..types import BFNamelistSc
 from ..ui.prop_panels import toggle_simple_property_panel
-from ..lang.bf_object import OP_other
-from ..lang.bf_material import MP_other
+
+import logging
 
 log = logging.getLogger(__name__)
 

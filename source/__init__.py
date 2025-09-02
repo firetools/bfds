@@ -21,7 +21,7 @@ import logging
 # Reading class definitions,
 # bl should be imported before lang,
 # because it imports ui_lists
-from . import bl, lang
+from . import bl, lang, ui
 
 logging.basicConfig(level=logging.INFO)  # INFO or DEBUG
 log = logging.getLogger(__name__)
