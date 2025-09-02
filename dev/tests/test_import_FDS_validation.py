@@ -5,8 +5,8 @@ import subprocess, os, pathlib, fnmatch
 
 FDS_COMMAND = "fds"
 FDS_CASES_PATHS = (
-    "../firemodels/fds/Validation",
-    "../firemodels/fds/Verification",
+    "../../firemodels/fds/Validation",
+    "../../firemodels/fds/Verification",
 )
 EXCLUDE_PATTERNS = (
     "*/Validation/BGC_GRI_LNG_Fires*",
