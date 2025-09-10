@@ -40,7 +40,7 @@ def _ob_to_pbs_planes(context, ob, world) -> tuple((list, list)):
             )
     pbs.sort()
     if not pbs:
-        raise BFException(ob, "PB*: No exported planes!")
+        raise BFException(ob, "PB*: No exported planes")
     msgs = list((f"PB* Planes: {len(pbs)}",))
     return pbs, msgs
 

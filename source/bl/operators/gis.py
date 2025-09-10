@@ -47,9 +47,9 @@ class _bf_set_geoloc:
         @param context: the Blender context.
         """
         col = self.layout.column(align=True)
-        col.label(text="Error on horizontal geoposition < 1 m")
         col.prop(self, "bf_lon", text="Longitude")
         col.prop(self, "bf_lat", text="Latitude")
+        col.label(text="Accuracy of horizontal geoposition ~1 m")
 
     def _get_loc(self, context):
         """!

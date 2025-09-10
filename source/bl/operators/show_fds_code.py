@@ -100,7 +100,7 @@ class OBJECT_OT_bf_show_fds_code(_show_fds_code, Operator):
     Show FDS code exported from current Object.
     """
 
-    bl_label = "Show FDS Code"
+    bl_label = "Show Code"
     bl_idname = "object.bf_show_fds_code"
     bl_description = "Show FDS code exported from current Object"
 
@@ -117,7 +117,7 @@ class COLLECTION_OT_bf_show_fds_code(_show_fds_code, Operator):
     Show FDS code exported from current Object.
     """
 
-    bl_label = "Show FDS Code"
+    bl_label = "Show Code"
     bl_idname = "collection.bf_show_fds_code"
     bl_description = "Show FDS code exported from current Collection"
 
@@ -134,7 +134,7 @@ class MATERIAL_OT_bf_show_fds_code(_show_fds_code, Operator):
     Show FDS code exported from current Material.
     """
 
-    bl_label = "Show FDS Code"
+    bl_label = "Show Code"
     bl_idname = "material.bf_show_fds_code"
     bl_description = "Show FDS code exported from current Material"
 
@@ -151,7 +151,7 @@ class SCENE_OT_bf_show_fds_code(_show_fds_code, Operator):
     Show FDS code exported from Scene.
     """
 
-    bl_label = "Show FDS Code"
+    bl_label = "Show Code"
     bl_idname = "scene.bf_show_fds_code"
     bl_description = "Show FDS code exported from Scene"
 
