@@ -25,8 +25,8 @@ class SP_config_case_name(BFParam):
     def copy_to(self, context, dest_element):
         pass
 
-    def draw_operators(self, context, layout):
-        layout.operator("scene.bf_props_to_sc", icon="COPYDOWN", text="")
+    # def draw_operators(self, context, layout):
+    #     layout.operator("scene.bf_props_to_sc", icon="COPYDOWN", text="")
 
 
 class SP_config_directory(BFParam):
@@ -165,6 +165,7 @@ class SN_config(BFNamelistSc):
     )
 
     def draw(self, context, layout):
-        row = layout.column(align=True)
+        row = layout.row()
         row.operator("scene.bf_show_fds_code", icon="HIDE_OFF")
+        row.operator("scene.bf_props_to_sc", icon="COPYDOWN")
         return super().draw(context, layout)

@@ -128,8 +128,8 @@ class OP_namelist_cls(BFParam):
         "update": update_OP_namelist_cls,
     }
 
-    def draw_operators(self, context, layout):
-        layout.operator("object.bf_props_to_sel_obs", icon="COPYDOWN", text="")
+    # def draw_operators(self, context, layout):
+    #     layout.operator("object.bf_props_to_sel_obs", icon="COPYDOWN", text="")
 
 
 class OP_ID(BFParam):

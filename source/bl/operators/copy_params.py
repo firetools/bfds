@@ -35,12 +35,17 @@ class SCENE_OT_bf_copy_props_to_sc(Operator):
 
     bl_label = "Copy To"
     bl_idname = "scene.bf_props_to_sc"
-    bl_description = "Copy case parameters to another Scene"
+    bl_description = "Copy FDS case parameters to another Scene"
     bl_options = {"REGISTER", "UNDO"}
 
     bf_dest_element: StringProperty(name="Destination")
 
+    @classmethod
+    def poll(cls, context):
+        return context.scene
+
     def draw(self, context):
+        self.layout.label(text=f"Source: <{context.scene.name}>")
         self.layout.prop_search(self, "bf_dest_element", bpy.data, "scenes")
 
     def invoke(self, context, event):
@@ -52,29 +57,40 @@ class SCENE_OT_bf_copy_props_to_sc(Operator):
         source_element = context.scene
         dest_element = bpy.data.scenes.get(self.bf_dest_element, None)
         if source_element == dest_element:
-            self.report({"WARNING"}, "Destination same as source")
+            self.report({"WARNING"}, "Destination same as source Scene")
             return {"CANCELLED"}
         if not dest_element:
-            self.report({"ERROR"}, "No destination")
+            self.report({"ERROR"}, "No destination Scene")
             return {"CANCELLED"}
         if not source_element:
-            self.report({"ERROR"}, "No source")
+            self.report({"ERROR"}, "No source Scene")
             return {"CANCELLED"}
 
         # Copy
         _bf_props_copy(context, source_element, (dest_element,))
-        self.report({"INFO"}, f"Parameters copied")
+        self.report(
+            {"INFO"},
+            f"Copied from <{source_element.name}> to <{dest_element.name}> Scene",
+        )
         return {"FINISHED"}
+
+
+def _get_dest_obs(context, source_element):
+    return set(
+        ob
+        for ob in context.selected_objects
+        if ob.type == "MESH" and ob != source_element
+    )
 
 
 class OBJECT_OT_bf_copy_FDS_properties_to_sel_obs(Operator):
     """!
-    Copy current FDS parameters to selected Objects.
+    Copy current FDS parameters to other selected Objects.
     """
 
     bl_label = "Copy To"
     bl_idname = "object.bf_props_to_sel_obs"
-    bl_description = "Copy FDS parameters to selected Objects"
+    bl_description = "Copy FDS parameters from this active Object and apply them to other selected Objects."
     bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
@@ -84,30 +100,33 @@ class OBJECT_OT_bf_copy_FDS_properties_to_sel_obs(Operator):
     def invoke(self, context, event):
         # Ask for confirmation
         wm = context.window_manager
-        return wm.invoke_confirm(self, event)
+        dest_elements = _get_dest_obs(context, source_element=context.object)
+        if not dest_elements:
+            self.report({"ERROR"}, "No destination, select other Objects")
+            return {"CANCELLED"}
+        return wm.invoke_confirm(
+            self,
+            event,
+            message=f"Copy from <{context.object.name}> to {len(dest_elements)} selected Object(s)?",
+        )
 
     def execute(self, context):
         bpy.ops.object.mode_set(mode="OBJECT")
-
         # Get source and destination objects
         source_element = context.object
-        dest_elements = set(
-            ob
-            for ob in context.selected_objects
-            if ob.type == "MESH" and ob != source_element
-        )
+        dest_elements = _get_dest_obs(context, source_element=source_element)
         if not dest_elements:
-            self.report({"ERROR"}, "No destination, select Objects")
+            self.report({"ERROR"}, "No destination, select other Objects")
             return {"CANCELLED"}
         if not source_element:
-            self.report({"ERROR"}, "No source")
+            self.report({"ERROR"}, "No source Object")
             return {"CANCELLED"}
 
         # Copy
         _bf_props_copy(context, source_element, dest_elements)
         self.report(
             {"INFO"},
-            f"Parameters copied to {len(dest_elements)} selected Object(s)",
+            f"Copied from <{source_element.name}> to {len(dest_elements)} selected Object(s)",
         )
         return {"FINISHED"}
 
@@ -119,7 +138,7 @@ class MATERIAL_OT_bf_copy_props_to_ma(Operator):
 
     bl_label = "Copy To"
     bl_idname = "material.bf_props_to_ma"
-    bl_description = "Copy parameters to another Material"
+    bl_description = "Copy FDS parameters to another Material"
     bl_options = {"REGISTER", "UNDO"}
 
     bf_dest_element: StringProperty(name="Destination")
@@ -130,6 +149,7 @@ class MATERIAL_OT_bf_copy_props_to_ma(Operator):
         return ob and ob.active_material
 
     def draw(self, context):
+        self.layout.label(text=f"Source: <{context.object.active_material.name}>")
         self.layout.prop_search(self, "bf_dest_element", bpy.data, "materials")
 
     def invoke(self, context, event):
@@ -141,18 +161,21 @@ class MATERIAL_OT_bf_copy_props_to_ma(Operator):
         source_element = context.object.active_material
         dest_element = bpy.data.materials.get(self.bf_dest_element, None)
         if source_element == dest_element:
-            self.report({"WARNING"}, "Destination same as source")
+            self.report({"WARNING"}, "Destination same as source Material")
             return {"CANCELLED"}
         if not dest_element:
-            self.report({"ERROR"}, "No destination")
+            self.report({"ERROR"}, "No destination Material")
             return {"CANCELLED"}
         if not source_element:
-            self.report({"ERROR"}, "No source")
+            self.report({"ERROR"}, "No source Material")
             return {"CANCELLED"}
 
         # Copy
         _bf_props_copy(context, source_element, (dest_element,))
-        self.report({"INFO"}, "Parameters copied")
+        self.report(
+            {"INFO"},
+            f"Copied from <{source_element.name}> to <{dest_element.name}> Material",
+        )
         return {"FINISHED"}
 
 
