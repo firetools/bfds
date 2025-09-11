@@ -4,16 +4,15 @@
 BFDS, handlers.
 """
 
-import bpy, logging
+import bpy
 from bpy.app.handlers import persistent, load_post, save_pre, depsgraph_update_post
 from bpy.types import Object
-from .. import utils
-from .. import config
-from ..types import BFNamelistSc
 
+from .. import utils, config
+from ..types import BFNamelistSc
 from ..ui.prop_panels import toggle_simple_property_panel
-from ..lang.bf_object import OP_other
-from ..lang.bf_material import MP_other
+
+import logging
 
 log = logging.getLogger(__name__)
 
@@ -24,34 +23,6 @@ def _load_post(self):
     Run automatic setup after loading a Blender file.
     """
     # Beware: self is None
-
-    # Check file format version
-    bf_file_version = tuple(bpy.data.scenes[0].bf_file_version)
-
-    if bf_file_version == (0, 0, 0):
-        # New file, set current file format version
-        for sc in bpy.data.scenes:
-            sc.bf_file_version = config.SUPPORTED_FILE_VERSION
-
-    elif bf_file_version < config.SUPPORTED_FILE_VERSION:
-        bpy.ops.wm.bf_dialog(
-            "INVOKE_DEFAULT",
-            msg="Check your data!",
-            description="This file was created with an old and unsupported BFDS version.",
-            type="ERROR",
-        )
-
-    elif bf_file_version > config.SUPPORTED_FILE_VERSION:
-        bpy.ops.wm.bf_dialog(
-            "INVOKE_DEFAULT",
-            msg="Install latest BFDS!",
-            description="This file was created with a new BFDS version.",
-            type="ERROR",
-        )
-
-    # Remove all caches and tmp objects, clean up to remove stale caches
-    utils.geometry.rm_geometric_caches()
-    utils.geometry.rm_tmp_objects()
 
     # Init FDS default materials
     for k, v in config.DEFAULT_MAS.items():
@@ -65,16 +36,15 @@ def _load_post(self):
     # Set default appearances of Scene, Object, Material instances
     context = bpy.context
     for sc in bpy.data.scenes:
-        # set only once
         BFNamelistSc(sc).set_appearance(context=context)
     for ob in bpy.data.objects:
         bf_namelist = ob.bf_namelist
-        if bf_namelist:
+        if bf_namelist:  # Is it a BFDS istance?
             # config.SET_OBJECT_APPEARANCE is checked in bf_namelist
             bf_namelist.set_appearance(context=context)
     for ma in bpy.data.materials:
         bf_namelist = ma.bf_namelist
-        if bf_namelist:
+        if bf_namelist:  # Is it a BFDS istance?
             # config.SET_MATERIAL_APPEARANCE is checked in bf_namelist
             bf_namelist.set_appearance(context=context)
 
@@ -91,9 +61,6 @@ def _save_pre(self):
     # Remove all caches and tmp objects, clean up to prevent stale caches
     utils.geometry.rm_geometric_caches()
     utils.geometry.rm_tmp_objects()
-    # Set file format version
-    for sc in bpy.data.scenes:
-        sc.bf_file_version = config.SUPPORTED_FILE_VERSION
 
 
 @persistent

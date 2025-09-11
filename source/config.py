@@ -11,14 +11,13 @@ import os, sys, bpy
 
 ADDON_NAME = "BFDS"
 ADDON_VERSION = 7, 0, 0
-SUPPORTED_FILE_VERSION = 6, 0, 2
 ADDON_PACKAGE = __package__
 ADDON_STARTUP_FILEPATH = os.path.join(
     os.path.dirname(sys.modules[ADDON_PACKAGE].__file__),  # add-on absolute path
     "startup.blend",
 )
 # See also: https://docs.blender.org/manual/en/dev/advanced/extensions/addons.html#local-storage
-# extension_directory = bpy.utils.extension_path_user(__package__, path="", create=True) # FIXME
+# extension_directory = bpy.utils.extension_path_user(__package__, path="", create=True) # TODO
 
 
 # Automatic appearance of Blender entities

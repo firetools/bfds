@@ -321,93 +321,9 @@ class OBJECT_OT_bf_align_to_mesh(Operator):
         return {"FINISHED"}
 
 
-# currently used only for testing FIXME rm and update test
-class OBJECT_OT_bf_align_selected_meshes(Operator):
-    bl_label = "Align Selected"
-    bl_idname = "object.bf_align_selected_meshes"
-    bl_description = "Align selected MESHes to the current Object MESH"
-    bl_options = {"REGISTER", "UNDO"}
-
-    @classmethod
-    def poll(cls, context):
-        ob = context.object
-        return ob and ob.bf_namelist_cls == "ON_MESH"
-
-    def invoke(self, context, event):  # Ask for confirmation
-        wm = context.window_manager
-        return wm.invoke_confirm(self, event)
-
-    def execute(self, context):
-        bpy.ops.object.mode_set(mode="OBJECT")
-
-        # Get source and destination objects
-        source_element = context.object
-        dest_elements = set(
-            ob
-            for ob in context.selected_objects
-            if ob.type == "MESH"
-            and ob != source_element
-            and ob.bf_namelist_cls == "ON_MESH"
-        )
-        if not dest_elements:
-            self.report({"WARNING"}, "No destination Object")
-            return {"CANCELLED"}
-        if not source_element:
-            self.report({"WARNING"}, "No source Object")
-            return {"CANCELLED"}
-
-        # Align
-        rijk = source_element.bf_mesh_ijk  # ref ijk
-        rxb = utils.geometry.get_bbox_xb(context, ob=source_element, world=True)
-        for de in dest_elements:
-            mijk = de.bf_mesh_ijk
-            mxb = utils.geometry.get_bbox_xb(context, ob=de, world=True)
-            try:
-                rijk, rxb, mijk, mxb, msg = lang.ON_MESH.align_meshes(
-                    rijk, rxb, mijk, mxb, poisson=False, protect_rxb=False
-                )
-            except BFException as err:
-                self.report({"ERROR"}, str(err))
-                return {"CANCELLED"}
-
-            # Set source element
-            source_element.bf_mesh_ijk = rijk
-            if source_element.data.users > 1:
-                source_element.data = bpy.data.meshes.new(source_element.data.name)
-            lang.OP_XB.xbs_to_ob(
-                context=context,
-                ob=source_element,
-                xbs=(rxb,),
-                bf_xb="BBOX",
-            )
-
-            # Set destination element
-            de.bf_mesh_ijk = mijk
-            if de.data.users > 1:
-                de.data = bpy.data.meshes.new(de.data.name)
-            lang.OP_XB.xbs_to_ob(
-                context=context,
-                ob=de,
-                xbs=(mxb,),
-                bf_xb="BBOX",
-            )
-            msg = f"<{de.name}> to <{source_element.name}>: {msg}"
-            log.debug(msg)
-
-        # Update 3dview
-        context.view_layer.update()
-        if len(dest_elements) == 1:
-            self.report({"INFO"}, f"Alignment: {msg}")
-            return {"FINISHED"}
-        else:
-            self.report({"INFO"}, "Alignment completed (see console log)")
-            return {"FINISHED"}
-
-
 bl_classes = [
     OBJECT_OT_bf_set_suggested_mesh_cell_size,
     OBJECT_OT_bf_set_mesh_cell_size,
-    OBJECT_OT_bf_align_selected_meshes,
     OBJECT_OT_bf_align_to_mesh,
 ]
 

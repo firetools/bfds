@@ -19,9 +19,9 @@ class OBJECT_OT_bf_show_fds_geometry(Operator):
     Show geometry of Object as exported to FDS.
     """
 
-    bl_label = "Show FDS Geometry"
+    bl_label = "Show Geometry"
     bl_idname = "object.bf_show_fds_geometry"
-    bl_description = "Show/Hide geometry as exported to FDS"
+    bl_description = "Show/Hide generated temporary geometry as exported to FDS"
 
     @classmethod
     def poll(cls, context):
@@ -60,7 +60,7 @@ class SCENE_OT_bf_hide_tmp_geometry(Operator):
     Hide all temporary geometry.
     """
 
-    bl_label = "Hide FDS Geometry"
+    bl_label = "Hide Geometry"
     bl_idname = "scene.bf_hide_fds_geometry"
     bl_description = "Hide all generated temporary geometry"
 

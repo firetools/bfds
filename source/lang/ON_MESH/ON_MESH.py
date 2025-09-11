@@ -30,6 +30,7 @@ def update_bf_mesh_nsplits(ob, context):
     if ob.bf_has_tmp:
         utils.geometry.rm_tmp_objects()
 
+
 class OP_MESH_IJK(BFParam):
     label = "IJK"
     description = "Cell numbers along axis"
@@ -43,7 +44,19 @@ class OP_MESH_IJK(BFParam):
     def draw(self, context, layout):
         ob = self.element
         try:
-            _, _, _, nmesh, nsplit, nmult, ncell_tot, ncell, cs, aspect, has_good_ijk = get_mesh_geometry(context=context, ob=ob)
+            (
+                _,
+                _,
+                _,
+                nmesh,
+                nsplit,
+                nmult,
+                ncell_tot,
+                ncell,
+                cs,
+                aspect,
+                has_good_ijk,
+            ) = get_mesh_geometry(context=context, ob=ob)
         except BFException:
             col = layout.column(align=True)
             col.label(text="No MESH info while in Edit Mode.")
@@ -51,14 +64,17 @@ class OP_MESH_IJK(BFParam):
             col = layout.column(align=True)
             col.label(text=f"MESH Qty: {nmesh} | Splits: {nsplit} | Multiples: {nmult}")
             col.label(text=f"Cell Qty: {ncell_tot} (~{ncell} each)")
-            col.label(text=f"Size: {cs[0]:.{LP}f}·{cs[1]:.{LP}f}·{cs[2]:.{LP}f}m | Aspect: {aspect:.1f} | Poisson: {has_good_ijk}")
+            col.label(
+                text=f"Size: {cs[0]:.{LP}f}·{cs[1]:.{LP}f}·{cs[2]:.{LP}f}m | Aspect: {aspect:.1f} | Poisson: {has_good_ijk}"
+            )
 
         col = layout.column()
         row = col.row(align=True)
-        row.prop(ob, "bf_mesh_ijk", text="IJK, Splits")    
+        row.prop(ob, "bf_mesh_ijk", text="IJK, Splits")
         sub = row.row(align=True)
         sub.active = ob.bf_mesh_nsplits_export
-        sub.prop(ob, "bf_mesh_nsplits", text="") 
+        sub.prop(ob, "bf_mesh_nsplits", text="")
+
 
 class OP_MESH_nsplits(BFParam):
     label = "Split IJK"
@@ -74,27 +90,38 @@ class OP_MESH_nsplits(BFParam):
     def draw(self, context, layout):
         layout.prop(self.element, "bf_mesh_nsplits_export", text="Split")
 
+
 class OP_MESH_XB_BBOX(OP_XB_BBOX):
     # This class implements OP_XB_BBOX
     # adding MESH split, IJK calculations, and MPI processes
 
     def to_fds_list(self, context) -> FDSList:
         ob = self.element
-        hids, ijks, xbs, _, _, _, _, ncell, cs, aspect, has_good_ijk = get_mesh_geometry(context=context, ob=ob)
+        hids, ijks, xbs, _, _, _, _, ncell, cs, aspect, has_good_ijk = (
+            get_mesh_geometry(context=context, ob=ob)
+        )
         msg = f" | Size: {cs[0]:.{LP}f}·{cs[1]:.{LP}f}·{cs[2]:.{LP}f}m | Aspect: {aspect:.1f} | Poisson: {has_good_ijk}"
         match len(xbs):
             case 0:
-                return FDSList()  # FIXME raise exception?
+                return FDSList()  # TODO raise exception?
             case 1:
                 msg = f"Cell Qty: {ncell}{msg}"
                 return FDSParam(fds_label="XB", value=xbs[0], precision=LP, msgs=(msg,))
             case _:
                 iterable = (
                     (FDSParam(fds_label="ID", value=hid) for hid in hids),
-                    (FDSParam(fds_label="IJK", value=ijk, msgs=(f"Cell Qty: {ijk[0]*ijk[1]*ijk[2]}{msg}",)) for ijk in ijks),
+                    (
+                        FDSParam(
+                            fds_label="IJK",
+                            value=ijk,
+                            msgs=(f"Cell Qty: {ijk[0]*ijk[1]*ijk[2]}{msg}",),
+                        )
+                        for ijk in ijks
+                    ),
                     (FDSParam(fds_label="XB", value=xb, precision=LP) for xb in xbs),
                 )
                 return FDSMulti(iterable=iterable)
+
 
 class OP_MESH_MPI_PROCESS(BFParam):  # only import
     label = "MPI_PROCESS"
@@ -103,7 +130,7 @@ class OP_MESH_MPI_PROCESS(BFParam):  # only import
     bpy_type = Object
 
     def draw(self, context, layout):
-        pass 
+        pass
 
     def set_value(self, context, value=None):
         # Set the number of MPI processes from the FDS file
@@ -111,6 +138,7 @@ class OP_MESH_MPI_PROCESS(BFParam):  # only import
         sc.bf_config_mpi_processes_export = True
         if value + 1 > sc.bf_config_mpi_processes:
             sc.bf_config_mpi_processes = value + 1
+
 
 class ON_MESH(BFNamelistOb):
     label = "MESH"

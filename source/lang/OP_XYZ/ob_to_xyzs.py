@@ -26,7 +26,7 @@ def _ob_to_xyzs_vertices(context, ob, world) -> tuple((list, list)):
     bm.free()
     xyzs.sort()
     if not xyzs:
-        raise BFException(ob, "XYZ: No exported vertices!")
+        raise BFException(ob, "XYZ: No exported vertices")
     msgs = list((f"XYZ Vertices: {len(xyzs)}",))
     return xyzs, msgs
 

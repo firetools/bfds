@@ -302,6 +302,7 @@ class BFNamelistOb(BFNamelist):
         else:
             row.operator("object.bf_show_fds_geometry", icon="HIDE_OFF")
         row.operator("object.bf_show_fds_code", icon="HIDE_OFF")
+        row.operator("object.bf_props_to_sel_obs", icon="COPYDOWN")
         return super().draw(context, layout)
 
 
@@ -336,7 +337,9 @@ class BFNamelistMa(BFNamelist):
 
     def draw(self, context, layout):
         ma = self.element
-        layout.operator("material.bf_show_fds_code", icon="HIDE_OFF")
+        row = layout.row()
+        row.operator("material.bf_show_fds_code", icon="HIDE_OFF")
+        row.operator("material.bf_props_to_ma", icon="COPYDOWN")
         # Manage default Materials
         if ma.name in config.DEFAULT_MAS:
             layout.label(text=f"Predefined {self.element.name} boundary condition")

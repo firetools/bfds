@@ -32,7 +32,7 @@ def run_in_terminal(cmd, title="Run"):
     else:
         raise Exception(f"Unsupported platform: {platform}")
     if not term_cmd:
-        raise Exception("Terminal emulator not found, open a BFDS issue")
+        raise Exception("Terminal emulator not found")
     # Set title and command
     term_cmd = term_cmd.format(cmd=cmd, title=title)
     # Run command in terminal

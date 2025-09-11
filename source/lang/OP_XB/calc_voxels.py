@@ -47,7 +47,7 @@ def get_voxels(context, ob):
     bpy.data.meshes.remove(ob_tmp.data, do_unlink=True)  # no mem leaks
     # Check
     if len(bm.faces) == 0:  # no faces
-        raise BFException(ob, "No voxel created!")
+        raise BFException(ob, "No voxel created")
     # Get faces and sort them according to normals
     x_faces, y_faces, z_faces = _sort_faces_by_normal(bm)
     # Choose shorter list of faces, relative functions, and parameters
@@ -73,7 +73,7 @@ def get_voxels(context, ob):
     # Clean up
     bm.free()
     if not xbs:
-        raise BFException(ob, "No voxel created!")
+        raise BFException(ob, "No voxel created")
     scale_length = context.scene.unit_settings.scale_length
     return xbs, voxel_size * scale_length
 

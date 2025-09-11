@@ -84,8 +84,8 @@ class MP_namelist_cls(BFParam):
     }
     bpy_default = "MN_SURF"
 
-    def draw_operators(self, context, layout):
-        layout.operator("material.bf_props_to_ma", icon="COPYDOWN", text="")
+    # def draw_operators(self, context, layout):
+    #     layout.operator("material.bf_props_to_ma", icon="COPYDOWN", text="")
 
 
 class MP_ID(BFParam):
@@ -186,6 +186,7 @@ class MP_TRANSPARENCY(BFParam):  # no draw
 #             return super().set_value(context, value)
 #         else:
 #             raise BFNotImported(self, "Material list not handled")
+
 
 # When this Material is default, export DEFAULT=T
 class MP_DEFAULT(BFParam):  # no label

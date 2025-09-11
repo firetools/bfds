@@ -27,7 +27,7 @@ def _ob_to_xbs_voxels(context, ob, world) -> tuple((list, list)):
     """
     xbs, voxel_size = get_voxels(context=context, ob=ob)
     if not xbs:
-        raise BFException(ob, "XB: No exported voxels!")
+        raise BFException(ob, "XB: No exported voxels")
     msgs = list((f"XB Voxels: {len(xbs)} | Resolution: {voxel_size:.{LP}f} m",))
     return xbs, msgs
 
@@ -43,7 +43,7 @@ def _ob_to_xbs_pixels(context, ob, world) -> tuple((list, list)):
     """
     xbs, voxel_size = get_pixels(context=context, ob=ob)
     if not xbs:
-        raise BFException(ob, "XB: No exported pixels!")
+        raise BFException(ob, "XB: No exported pixels")
     scale_length = context.scene.unit_settings.scale_length
     res = voxel_size * scale_length
     msgs = list((f"XB Pixels: {len(xbs)} | Resolution: {res:.{LP}f} m",))
@@ -91,7 +91,7 @@ def _ob_to_xbs_faces(context, ob, world) -> tuple((list, list)):
     bm.free()
     xbs.sort()
     if not xbs:
-        raise BFException(ob, "XB: No exported faces!")
+        raise BFException(ob, "XB: No exported faces")
     msgs = list((f"XB Faces: {len(xbs)}",))
     return xbs, msgs
 
@@ -115,7 +115,7 @@ def _ob_to_xbs_edges(context, ob, world) -> tuple((list, list)):
     bm.free()
     xbs.sort()
     if not xbs:
-        raise BFException(ob, "XB: No exported edges!")
+        raise BFException(ob, "XB: No exported edges")
     msgs = list((f"XB Edges: {len(xbs)}",))
     return xbs, msgs
 

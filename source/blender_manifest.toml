@@ -1,6 +1,6 @@
 schema_version = "1.0.0"
 id = "bfds"
-version = "7.0.0-beta.2"
+version = "7.0.0-beta.4"
 name = "BFDS fire simulations"
 tagline = "Create and manage NIST FDS fire simulations"
 maintainer = "Emanuele Gissi"
@@ -16,7 +16,7 @@ wheels = ["./wheels/f90nml-1.4.5-py2.py3-none-any.whl",]
 
 [permissions]
 files = "Import/export FDS files from/to disk"
-network = "Display geographic positions on the OSM website, and convert coordinates using the EPSG.io website."
+network = "Display geographic positions, convert coordinates"
 # clipboard = "Copy and paste bone transforms"
 
 [build]

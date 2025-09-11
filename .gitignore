@@ -1,6 +1,10 @@
 # Blender backup
 *.blend1
 
+# Blender binary for testing
+blender
+blender-*/
+
 # Images
 *.png
 *.pdf

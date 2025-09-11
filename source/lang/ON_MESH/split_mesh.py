@@ -7,7 +7,7 @@ Split MESH parameters according to nsplits.
 
 from ...types import BFException
 
-# FIXME split when there is another coarser mesh close-by?
+# TODO prevent split when there is another coarser mesh close-by
 
 
 def split_cells(ncell, nsplit):

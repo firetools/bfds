@@ -21,6 +21,7 @@ class TOPBAR_MT_editor_menus(Menu):
         layout.menu("TOPBAR_MT_file")
         layout.menu("TOPBAR_MT_edit")
 
+        # BFDS
         # layout.menu("TOPBAR_MT_render")
 
         layout.menu("TOPBAR_MT_window")
