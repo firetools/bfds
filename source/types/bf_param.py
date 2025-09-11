@@ -375,6 +375,8 @@ class BFParam:
         Copy self values to destination element.
         @param dest_element: element of the same type of self.element.
         """
+        if self.bpy_type == Mesh:
+            dest_element = dest_element.data
         log.debug(f"  Copying <{self}> to <{dest_element.name}>")
         if self.bpy_export:
             value = getattr(self.element, self.bpy_export)
