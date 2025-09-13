@@ -11,7 +11,7 @@ blender_version_min = "4.5.0"
 # blender_version_max = "4.5.9"
 license = ["SPDX:GPL-3.0-or-later",]
 copyright = [ "2025 Emanuele Gissi"]
-platforms = ["windows-x64", "macos-arm64", "linux-x64"]
+platforms = ["windows-x64", "windows-arm64", "macos-arm64", "macos-x64", "linux-x64"]
 wheels = ["./wheels/f90nml-1.4.5-py2.py3-none-any.whl",]
 
 [permissions]
