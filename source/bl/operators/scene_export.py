@@ -57,9 +57,10 @@ class ExportSceneToFDS(Operator, ExportHelper):
 
         # If filepath was relative, keep it relative
         sc = context.scene
-        if not utils.io.is_abs(sc.bf_config_directory):
-            self.filepath = bpy.path.relpath(self.filepath)
-        sc.bf_config_directory, sc.name = utils.io.extract_path_name(self.filepath)
+        if self.filepath:
+            if not utils.io.is_abs(sc.bf_config_directory):
+                self.filepath = bpy.path.relpath(self.filepath)
+            sc.bf_config_directory, sc.name = utils.io.extract_path_name(self.filepath)
 
         # Export
         try:

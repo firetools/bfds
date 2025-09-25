@@ -14,7 +14,7 @@ log = logging.getLogger(__name__)
 
 class OBJECT_OT_bf_check_intersections(Operator):
     """!
-    Check self-intersections or intersections with other selected objects.
+    Check self-intersections or intersections of the active object with other selected objects.
     """
 
     bl_label = "Check Intersections"
@@ -50,12 +50,12 @@ class OBJECT_OT_bf_check_intersections(Operator):
 
 class OBJECT_OT_bf_check_sanity(Operator):
     """!
-    Check if closed orientable manifold, with no degenerate geometry.
+    Check if the active object is a closed orientable 2-manifold, with no degenerate geometry.
     """
 
     bl_label = "Check Sanity"
     bl_idname = "object.bf_geom_check_sanity"
-    bl_description = "Check if closed orientable manifold, with no degenerate geometry"
+    bl_description = "Check if the active object is a closed orientable 2-manifold, with no degenerate geometry"
 
     @classmethod
     def poll(cls, context):
