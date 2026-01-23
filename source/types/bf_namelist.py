@@ -230,7 +230,8 @@ class BFNamelistSc(BFNamelist):
     bpy_type = Scene
 
     def set_appearance(self, context):
-        if not config.SET_SCENE_APPEARANCE:
+        bf_prefs = context.preferences.addons[config.ADDON_PACKAGE].preferences
+        if not bf_prefs.bf_pref_auto_appearance:
             return
         self.element.render.engine = "BLENDER_WORKBENCH"
 
@@ -253,7 +254,8 @@ class BFNamelistOb(BFNamelist):
             self.element.hide_render = not bool(value)
 
     def set_appearance(self, context):
-        if not config.SET_OBJECT_APPEARANCE:
+        bf_prefs = context.preferences.addons[config.ADDON_PACKAGE].preferences
+        if not bf_prefs.bf_pref_auto_appearance:
             return
         match self.bf_other.get("appearance"):
             case "BBOX":
@@ -321,7 +323,8 @@ class BFNamelistMa(BFNamelist):
         return False
 
     def set_appearance(self, context):
-        if not config.SET_MATERIAL_APPEARANCE:
+        bf_prefs = context.preferences.addons[config.ADDON_PACKAGE].preferences
+        if not bf_prefs.bf_pref_auto_appearance:
             return
         # This forces the use of diffuse_color for 3DView render
         self.element.use_nodes = False

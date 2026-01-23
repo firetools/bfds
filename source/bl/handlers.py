@@ -40,12 +40,12 @@ def _load_post(self):
     for ob in bpy.data.objects:
         bf_namelist = ob.bf_namelist
         if bf_namelist:  # Is it a BFDS istance?
-            # config.SET_OBJECT_APPEARANCE is checked in bf_namelist
+            # bf_pref_auto_appearance is checked in bf_namelist
             bf_namelist.set_appearance(context=context)
     for ma in bpy.data.materials:
         bf_namelist = ma.bf_namelist
         if bf_namelist:  # Is it a BFDS istance?
-            # config.SET_MATERIAL_APPEARANCE is checked in bf_namelist
+            # bf_pref_auto_appearance is checked in bf_namelist
             bf_namelist.set_appearance(context=context)
 
     # Set simplified property panel
