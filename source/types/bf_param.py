@@ -7,9 +7,9 @@ BFDS, Blender interfaces to FDS parameters.
 import logging, bpy
 from bpy.types import Operator, Mesh
 from bpy.props import IntProperty, CollectionProperty, BoolProperty, StringProperty
-from ..config import DEFAULT_P
 from .fds_list import FDSList, FDSParam
 from .bf_exception import BFException, BFNotImported
+from .. import config
 
 log = logging.getLogger(__name__)
 
@@ -152,19 +152,20 @@ class BFParam:
         if not cls.description:
             cls.description = ""
 
-        # Insert fds_default in description and, if empty, in bpy_default
-        if cls.fds_default is not None:
-            cls.description += f"\nFDS default: {cls.fds_default}"
-            if cls.bpy_default is None:
-                cls.bpy_default = cls.fds_default
+        # If empty, insert fds_default in bpy_default
+        if cls.fds_default is not None and cls.bpy_default is None:
+            cls.bpy_default = cls.fds_default
 
         # Create bpy_idname
         if cls.bpy_idname and cls.bpy_prop:
+            description = cls.description
+            if cls.fds_default is not None:
+                description += f"\nFDS default: {cls.fds_default}"
             cls._register_bpy_prop(
                 bpy_idname=cls.bpy_idname,
                 bpy_prop=cls.bpy_prop,
                 label=cls.label,
-                description=cls.description,
+                description=description,
                 default=cls.bpy_default,
                 bpy_other=cls.bpy_other,
             )
@@ -174,8 +175,8 @@ class BFParam:
             cls._register_bpy_prop(
                 bpy_idname=cls.bpy_export,
                 bpy_prop=BoolProperty,
-                label=f"Activate {cls.label}",
-                description=f"Set if {cls.label} shall be activated",
+                label=f"Enable {cls.label}",
+                description=f"Set if {cls.label} shall be enabled",
                 default=cls.bpy_export_default,
                 bpy_other={"update": cls.bpy_other.get("update")},
             )
@@ -366,7 +367,7 @@ class BFParam:
             return FDSParam(
                 fds_label=self.fds_label,
                 value=self.get_value(context=context),
-                precision=self.bpy_other.get("precision", DEFAULT_P),
+                precision=self.bpy_other.get("precision", config.DEFAULT_P),
             )
         return FDSList()
 
