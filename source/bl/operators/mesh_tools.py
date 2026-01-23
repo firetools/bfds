@@ -208,6 +208,10 @@ class OBJECT_OT_bf_set_mesh_cell_size(Operator):
 
 
 def _get_mesh_items(self, context):
+    # Protect
+    if not context:
+        return list()
+
     obs = utils.geometry.get_exported_obs(context, obs=context.scene.objects)
     sel_ob = context.object
     items = list(
