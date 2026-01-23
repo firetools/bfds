@@ -9,9 +9,9 @@ import os, sys, bpy
 
 # Blender addon general properites
 
-ADDON_NAME = "BFDS"
-ADDON_VERSION = 7, 0, 0
 ADDON_PACKAGE = __package__
+ADDON_NAME = "BFDS"
+ADDON_VERSION = 7, 1, 0  # beware update toml manifest!
 ADDON_STARTUP_FILEPATH = os.path.join(
     os.path.dirname(sys.modules[ADDON_PACKAGE].__file__),  # add-on absolute path
     "startup.blend",
@@ -129,6 +129,9 @@ LINUX_TERM_COMMAND = [
 
 
 # Other settings
+
+# generate markdown files for code documentation
+MD = False
 
 # number of magnetic cells for MESH alignment (align_meshes.py)
 MAGNET_NCELL = 3
