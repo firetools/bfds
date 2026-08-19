@@ -15,10 +15,14 @@ log = logging.getLogger(__name__)
 # Helper function
 
 
-def get_referenced_ids(context, fds_label="SURF"):
+def get_referenced_ids(context, fds_label):
     """!
     Get fds_label IDs referenced in Free Text.
     """
+    # Protect
+    if not context or not fds_label:
+        return list()
+
     fds_list = FDSList()
     sc = context.scene
 

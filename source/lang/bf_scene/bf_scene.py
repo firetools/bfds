@@ -36,8 +36,8 @@ class BFScene:
         """!
         Return the FDS formatted string.
         @param context: the Blender context.
-        @param full: if True, return full FDS case.
-        @param save: if True, save to disk.
+        @param full: if True, return the full FDS case.
+        @param save: if True, save to disk in `self.bf_config_directory`.
         @return FDS formatted string (eg. "&OBST ID='Test' /"), or None.
         """
         log.debug(f"Export from Scene {self.name}...")

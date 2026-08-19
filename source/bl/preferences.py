@@ -30,10 +30,15 @@ class BFPreferences(AddonPreferences):
     bl_idname = config.ADDON_PACKAGE
 
     bf_pref_simplify_ui: BoolProperty(
-        name="Simplify Blender UI",
-        description="Simplify Blender user interface",
+        name="Simplify Blender user interface for BFDS",
+        description="Simplify Blender user interface for BFDS",
         default=False,
         update=update_bf_pref_simplify_ui,
+    )
+    bf_pref_auto_appearance: BoolProperty(
+        name="Auto set the appearance of BFDS entities",
+        description="Automatically set the appearance of BFDS entities",
+        default=True,
     )
 
     bf_pref_fds_command: StringProperty(
@@ -80,12 +85,9 @@ class BFPreferences(AddonPreferences):
 
         col = layout.column()
         col.prop(self, "bf_pref_simplify_ui")
-        col.prop(paths, "use_load_ui", text="Load UI setup when loading .blend files")
-        col.prop(
-            paths,
-            "use_relative_paths",
-            text="Default to relative paths in the file selector",
-        )
+        col.prop(self, "bf_pref_auto_appearance")
+        col.prop(paths, "use_load_ui")
+        col.prop(paths, "use_relative_paths")
 
         box = layout.box()
         box.label(text="External Commands")

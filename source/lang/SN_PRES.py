@@ -35,7 +35,7 @@ class SP_PRES_BAROCLINIC(BFParam):
 
 class SP_PRES_VELOCITY_TOLERANCE(BFParam):
     label = "VELOCITY_TOLERANCE"
-    description = "Maximum allowable normal velocity component\non the solid boundary or the largest error at a mesh interface"
+    description = "Maximum allowable normal velocity component on the solid boundary or the largest error at a mesh interface"
     fds_label = "VELOCITY_TOLERANCE"
     bpy_type = Scene
     bpy_idname = "bf_pres_velocity_tolerance"

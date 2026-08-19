@@ -9,26 +9,18 @@ import os, sys, bpy
 
 # Blender addon general properites
 
-ADDON_NAME = "BFDS"
-ADDON_VERSION = 7, 0, 0
 ADDON_PACKAGE = __package__
+ADDON_NAME = "BFDS"
+ADDON_VERSION = 7, 2, 0  # beware update toml manifest!  # TODO read from toml
 ADDON_STARTUP_FILEPATH = os.path.join(
     os.path.dirname(sys.modules[ADDON_PACKAGE].__file__),  # add-on absolute path
     "startup.blend",
 )
+
 # See also: https://docs.blender.org/manual/en/dev/advanced/extensions/addons.html#local-storage
 # extension_directory = bpy.utils.extension_path_user(__package__, path="", create=True) # TODO
 
-
-# Automatic appearance of Blender entities
-
-# set automatic Blender Scene appearance
-SET_SCENE_APPEARANCE = True
-# set automatic Blender Object appearance
-SET_OBJECT_APPEARANCE = True
-# set automatic Blender Material appearance
-SET_MATERIAL_APPEARANCE = True
-
+# Automatic appearance of Blender entities is set in preferences
 
 # Exported decimal positions of floats
 
@@ -129,6 +121,9 @@ LINUX_TERM_COMMAND = [
 
 
 # Other settings
+
+# generate markdown files for code documentation
+MD = False
 
 # number of magnetic cells for MESH alignment (align_meshes.py)
 MAGNET_NCELL = 3
