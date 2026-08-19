@@ -24,7 +24,7 @@ def _set_property_panels_visibility(space):
     space.show_properties_constraints = False
     space.show_properties_data = False
     space.show_properties_bone = False
-    space.show_properties_bone_constraints
+    space.show_properties_bone_constraints = False
     space.show_properties_material = True
     space.show_properties_texture = False
 

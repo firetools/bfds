@@ -2,8 +2,11 @@
 *.blend1
 
 # Blender binary for testing
-blender
-blender-*/
+*/blender
+*/blender-*/
+
+# BFDS packages
+dev/bfds-*
 
 # Images
 *.png

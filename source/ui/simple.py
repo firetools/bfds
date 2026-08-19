@@ -15,7 +15,7 @@ log = logging.getLogger(__name__)
 
 
 # Names of original Blender classes to be removed
-# from: 4.5/scripts/startup/bl_ui/*_workspace.py
+# from: 5.2/scripts/startup/bl_ui/*_workspace.py
 _remove_class_names = (
     # Scene panel
     "SCENE_UL_keying_set_paths",

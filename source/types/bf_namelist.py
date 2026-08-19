@@ -326,8 +326,9 @@ class BFNamelistMa(BFNamelist):
         bf_prefs = context.preferences.addons[config.ADDON_PACKAGE].preferences
         if not bf_prefs.bf_pref_auto_appearance:
             return
-        # This forces the use of diffuse_color for 3DView render
-        self.element.use_nodes = False
+        # Blender 5.2 always exposes the viewport diffuse color. The legacy
+        # Material.use_nodes toggle is deprecated and will be removed in 6.0.
+        return
 
     def draw_header(self, context, layout, panel):
         ma = self.element

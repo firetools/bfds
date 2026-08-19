@@ -11,7 +11,7 @@ import os, sys, bpy
 
 ADDON_PACKAGE = __package__
 ADDON_NAME = "BFDS"
-ADDON_VERSION = 7, 1, 0  # beware update toml manifest!  # TODO read from toml
+ADDON_VERSION = 7, 2, 0  # beware update toml manifest!  # TODO read from toml
 ADDON_STARTUP_FILEPATH = os.path.join(
     os.path.dirname(sys.modules[ADDON_PACKAGE].__file__),  # add-on absolute path
     "startup.blend",

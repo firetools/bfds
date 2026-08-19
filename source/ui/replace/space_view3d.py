@@ -4,12 +4,18 @@
 
 import bpy
 from bpy.types import Header, Menu
+from bl_ui.properties_paint_common import UnifiedPaintPanel
+from bl_ui.space_view3d import (
+    VIEW3D_PT_overlay_bones,
+    VIEW3D_PT_shading,
+    _toggle_xray_operator,
+    draw_topbar_grease_pencil_layer_panel,
+)
 from bpy.app.translations import (
     pgettext_iface as iface_,
-    pgettext_rpt as rpt_,
     contexts as i18n_contexts,
 )
-from bpy.types import VIEW3D_MT_editor_menus, VIEW3D_PT_overlay_bones
+from bpy.types import VIEW3D_MT_editor_menus
 
 
 class VIEW3D_HT_header(Header):
@@ -327,7 +333,7 @@ class VIEW3D_HT_header(Header):
                 paint = tool_settings.sculpt
                 brush = paint.brush
                 if brush:
-                    is_paint_tool = brush.sculpt_tool in {"PAINT", "SMEAR"}
+                    is_paint_tool = brush.sculpt_brush_type in {"PAINT", "SMEAR"}
             else:
                 is_paint_tool = tool and tool.use_paint_canvas
 
@@ -361,7 +367,9 @@ class VIEW3D_HT_header(Header):
             layout.popover(
                 panel="VIEW3D_PT_sculpt_automasking",
                 text="",
-                icon=VIEW3D_HT_header._sculpt_automasking_icon(tool_settings.sculpt),
+                icon=VIEW3D_HT_header._mesh_paint_automasking_icon(
+                    tool_settings.sculpt
+                ),
             )
 
         elif object_mode == "VERTEX_PAINT":
@@ -475,20 +483,7 @@ class VIEW3D_HT_header(Header):
         row = layout.row()
         row.active = (object_mode == "EDIT") or (shading.type in {"WIREFRAME", "SOLID"})
 
-        # While exposing `shading.show_xray(_wireframe)` is correct.
-        # this hides the key shortcut from users: #70433.
-        if has_pose_mode:
-            draw_depressed = overlay.show_xray_bone
-        elif shading.type == "WIREFRAME":
-            draw_depressed = shading.show_xray_wireframe
-        else:
-            draw_depressed = shading.show_xray
-        row.operator(
-            "view3d.toggle_xray",
-            text="",
-            icon="XRAY",
-            depress=draw_depressed,
-        )
+        _toggle_xray_operator(row, context, text="")
 
         row = layout.row(align=True)
         row.prop(shading, "type", text="", expand=True)
@@ -500,16 +495,17 @@ class VIEW3D_HT_header(Header):
         sub.popover(panel="VIEW3D_PT_shading", text="")
 
     @staticmethod
-    def _sculpt_automasking_icon(sculpt):
+    def _mesh_paint_automasking_icon(paint):
+        settings = paint.mesh_automasking_settings
         automask_enabled = (
-            sculpt.use_automasking_topology
-            or sculpt.use_automasking_face_sets
-            or sculpt.use_automasking_boundary_edges
-            or sculpt.use_automasking_boundary_face_sets
-            or sculpt.use_automasking_cavity
-            or sculpt.use_automasking_cavity_inverted
-            or sculpt.use_automasking_start_normal
-            or sculpt.use_automasking_view_normal
+            settings.use_automasking_topology
+            or settings.use_automasking_face_sets
+            or settings.use_automasking_boundary_edges
+            or settings.use_automasking_boundary_face_sets
+            or settings.use_automasking_cavity
+            or settings.use_automasking_cavity_inverted
+            or settings.use_automasking_start_normal
+            or settings.use_automasking_view_normal
         )
 
         return "CLIPUV_DEHLT" if automask_enabled else "CLIPUV_HLT"
